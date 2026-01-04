@@ -1,0 +1,41 @@
+/* Targeted mobile compatibility tweaks (loaded after theme + custom-navbar) */
+
+/* Prevent large logos from colliding with the hamburger on very small screens */
+@media (max-width: 575.98px) {
+  #ftco-navbar .navbar-brand {
+    max-width: calc(100% - 110px);
+  }
+
+  #ftco-navbar .navbar-brand img {
+    max-width: 160px;
+    width: 100%;
+    height: auto;
+    margin-right: 8px !important;
+  }
+}
+
+/* Checkout progress: hide arrows and allow steps to wrap cleanly on phones */
+@media (max-width: 575.98px) {
+  .checkout-progress {
+    justify-content: center !important;
+  }
+
+  .checkout-progress-arrow {
+    display: none !important;
+  }
+
+  .checkout-step {
+    flex: 1 1 140px !important;
+    min-width: 140px !important;
+  }
+}
+
+/* Confirmation tables: avoid horizontal overflow */
+@media (max-width: 575.98px) {
+  .confirmation-page table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

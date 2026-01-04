@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "About Us" %} - Sip and SunShine{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_4.jpg' %}');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">{% trans "About Us" %}</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'restaurant:home' %}">{% trans "Home" %} <i class="ion-ios-arrow-forward"></i></a></span> <span>{% trans "About" %} <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Content -->
+<section class="ftco-section ftco-wrap-about px-md-0">
+    <div class="row no-gutters">
+        <div class="col-md-6 p-md-5 img img-2 d-flex justify-content-center align-items-center" style="background-image: url('{% static 'images/about.jpg' %}');">
+        </div>
+        <div class="col-md-6 wrap-about ftco-animate">
+            <div class="heading-section mb-4 ml-md-0">
+                <span class="subheading">About</span>
+                <h2 class="mb-4">Sip and SunShine</h2>
+            </div>
+            <p>{{ page.content|safe }}</p>
+            <p>Since our establishment in 2010, we have been dedicated to providing an exceptional dining experience. Our commitment to quality, innovation, and hospitality sets us apart from the rest.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Our Mission -->
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 heading-section ftco-animate text-center">
+                <span class="subheading">Values</span>
+                <h2 class="mb-4">Why Choose Us</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 ftco-animate">
+                <div class="block-7 text-center">
+                    <div class="icon d-flex align-items-center justify-content-center mb-4">
+                        <span class="flaticon-cheers text-primary" style="font-size: 80px;"></span>
+                    </div>
+                    <h3>Quality Cuisine</h3>
+                    <p>We use only the finest ingredients sourced from trusted suppliers to craft our signature dishes.</p>
+                </div>
+            </div>
+            <div class="col-md-4 ftco-animate">
+                <div class="block-7 text-center">
+                    <div class="icon d-flex align-items-center justify-content-center mb-4">
+                        <span class="flaticon-chef text-primary" style="font-size: 80px;"></span>
+                    </div>
+                    <h3>Expert Team</h3>
+                    <p>Our experienced chefs and staff are passionate about delivering exceptional service and culinary artistry.</p>
+                </div>
+            </div>
+            <div class="col-md-4 ftco-animate">
+                <div class="block-7 text-center">
+                    <div class="icon d-flex align-items-center justify-content-center mb-4">
+                        <span class="flaticon-restaurant text-primary" style="font-size: 80px;"></span>
+                    </div>
+                    <h3>Ambiance</h3>
+                    <p>Enjoy your meal in our beautifully designed dining space with warm lighting and elegant decor.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="ftco-section ftco-no-pb">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 heading-section ftco-animate text-center">
+                <span class="subheading">Team</span>
+                <h2 class="mb-4">Meet Our Chefs</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-lg-3 ftco-animate">
+                <div class="staff">
+                    <div class="img mb-4" style="background-image: url('{% static 'images/chef-1.jpg' %}');"></div>
+                    <div class="info text-center">
+                        <h3><a href="#">{% trans "Head Chef" %}</a></h3>
+                        <span class="position">Master Chef</span>
+                        <div class="social mb-4">
+                            <a href="#" class="social-icon"><span class="icon-facebook"></span></a>
+                            <a href="#" class="social-icon"><span class="icon-twitter"></span></a>
+                            <a href="#" class="social-icon"><span class="icon-instagram"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 ftco-animate">
+                <div class="staff">
+                    <div class="img mb-4" style="background-image: url('{% static 'images/chef-2.jpg' %}');"></div>
+                    <div class="info text-center">
+                        <h3><a href="#">{% trans "Sous Chef" %}</a></h3>
+                        <span class="position">Senior Chef</span>
+                        <div class="social mb-4">
+                            <a href="#" class="social-icon"><span class="icon-facebook"></span></a>
+                            <a href="#" class="social-icon"><span class="icon-twitter"></span></a>
+                            <a href="#" class="social-icon"><span class="icon-instagram"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 ftco-animate">
+                <div class="staff">
+                    <div class="img mb-4" style="background-image: url('{% static 'images/chef-3.jpg' %}');"></div>
+                    <div class="info text-center">
+                        <h3><a href="#">{% trans "Pastry Chef" %}</a></h3>
+                        <span class="position">Dessert Specialist</span>
+                        <div class="social mb-4">
+                            <a href="#" class="social-icon"><span class="icon-facebook"></span></a>
+                            <a href="#" class="social-icon"><span class="icon-twitter"></span></a>
+                            <a href="#" class="social-icon"><span class="icon-instagram"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 ftco-animate">
+                <div class="staff">
+                    <div class="img mb-4" style="background-image: url('{% static 'images/chef-4.jpg' %}');"></div>
+                    <div class="info text-center">
+                        <h3><a href="#">{% trans "Sommelier" %}</a></h3>
+                        <span class="position">Wine Expert</span>
+                        <div class="social mb-4">
+                            <a href="#" class="social-icon"><span class="icon-facebook"></span></a>
+                            <a href="#" class="social-icon"><span class="icon-twitter"></span></a>
+                            <a href="#" class="social-icon"><span class="icon-instagram"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url('{% static 'images/bg_5.jpg' %}');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 py-5 text-center">
+                <h2 class="mb-4">Ready to experience culinary excellence?</h2>
+                <p class="mb-4" style="font-size: 18px;">Join us for an unforgettable dining experience</p>
+                <p><a href="{% url 'restaurant:reservation' %}" class="btn btn-primary px-5 py-3 mt-3">{% trans "Reserve Your Table" %}</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

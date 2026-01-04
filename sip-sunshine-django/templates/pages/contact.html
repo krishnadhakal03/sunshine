@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Contact Us" %} - Sip and SunShine{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Contact Page Styling */
+    .contact-hero {
+        background: linear-gradient(rgba(244, 73, 73, 0.85), rgba(20, 19, 19, 0.85)), url('{% static 'images/bg_4.jpg' %}');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0;
+        color: white;
+    }
+
+    .contact-hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .contact-breadcrumb {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    .contact-breadcrumb a {
+        color: #ffc400;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .contact-breadcrumb a:hover {
+        color: white;
+    }
+
+    /* Contact Form Section */
+    .contact-form-section {
+        background: #f9f9f9;
+        padding: 80px 0;
+    }
+
+    .contact-form-wrapper {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        padding: 50px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .contact-form-wrapper:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(244, 73, 73, 0.15);
+    }
+
+    .contact-form-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .contact-form-title span {
+        color: #f34949;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px 15px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        background-color: #fafafa;
+    }
+
+    .form-control:focus {
+        border-color: #f34949;
+        box-shadow: 0 0 0 3px rgba(243, 73, 73, 0.1);
+        background-color: white;
+    }
+
+    .form-control::placeholder {
+        color: #999;
+    }
+
+    .form-group textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .contact-map-wrapper {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        height: 400px;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Contact Info Cards */
+    .contact-info-section {
+        background: white;
+        padding: 80px 0;
+    }
+
+    .contact-info-card {
+        background: white;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        height: 100%;
+    }
+
+    .contact-info-card:hover {
+        border-color: #f34949;
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(243, 73, 73, 0.2);
+    }
+
+    .contact-info-card .icon {
+        font-size: 2.5rem;
+        color: #f34949;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    .contact-info-card h6 {
+        font-weight: 700;
+        color: #1a1a1a;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+
+    .contact-info-card p {
+        color: #666;
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+
+    .contact-info-card a {
+        color: #f34949;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .contact-info-card a:hover {
+        color: #1a1a1a;
+    }
+
+    /* Section Title */
+    .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: #f34949;
+        border-radius: 2px;
+    }
+
+    .section-title p {
+        color: #666;
+        font-size: 1.1rem;
+        margin-top: 20px;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+        background: linear-gradient(135deg, #f34949 0%, #d63030 100%);
+        color: white;
+        border: none;
+        padding: 14px 40px;
+        font-weight: 600;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #d63030 0%, #b82222 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(243, 73, 73, 0.3);
+    }
+
+    .btn-submit:active {
+        transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .contact-hero h1 {
+            font-size: 2rem;
+        }
+
+        .contact-form-wrapper,
+        .contact-map-wrapper {
+            margin-bottom: 30px;
+        }
+
+        .contact-info-card {
+            margin-bottom: 30px;
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .contact-form-map-row {
+            display: flex;
+            gap: 30px;
+            align-items: stretch;
+        }
+
+        .contact-form-map-row > div {
+            flex: 1;
+        }
+    }
+
+    /* Utility Classes */
+    .min-vh-50 {
+        min-height: 50vh;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_4.jpg' %}');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">{% trans "Contact Us" %}</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'restaurant:home' %}">{% trans "Home" %} <i class="ion-ios-arrow-forward"></i></a></span> <span>{% trans "Contact" %} <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form & Map Section -->
+<section class="contact-form-section">
+    <div class="container">
+        <div class="row contact-form-map-row">
+            <!-- Contact Form -->
+            <div>
+                <div class="contact-form-wrapper">
+                    <h3 class="contact-form-title">{% trans "Get In" %} <span>{% trans "Touch" %}</span></h3>
+                    <form method="POST" class="contact-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="name">{% trans "Your Name" %}</label>
+                            <input type="text" class="form-control" id="name" placeholder="{% trans 'John Doe' %}" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">{% trans "Your Email" %}</label>
+                            <input type="email" class="form-control" id="email" placeholder="{% trans 'john@example.com' %}" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">{% trans "Phone Number" %}</label>
+                            <input type="tel" class="form-control" id="phone" placeholder="{% trans '+32 123 456 789' %}" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">{% trans "Subject" %}</label>
+                            <input type="text" class="form-control" id="subject" placeholder="{% trans 'How can we help?' %}" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">{% trans "Message" %}</label>
+                            <textarea name="message" id="message" cols="30" rows="5" class="form-control" placeholder="{% trans 'Tell us what you think...' %}" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">{% trans "Send Message" %}</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Map Section -->
+            <div>
+                {% if site_settings.google_map_embed %}
+                    <div class="contact-map-wrapper">
+                        {{ site_settings.google_map_embed|safe }}
+                    </div>
+                {% else %}
+                    <div class="contact-map-wrapper" style="display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center; padding: 40px;">
+                            <div class="icon icon-map-marker" style="font-size: 3rem; color: #f34949; margin-bottom: 20px;"></div>
+                            <h5 style="color: #666; margin-bottom: 15px;">{% trans "Map Coming Soon" %}</h5>
+                            <p style="color: #999; font-size: 0.9rem; margin-bottom: 10px;">
+                                {% trans "Google Map will appear here" %}
+                            </p>
+                            <p style="color: #999; font-size: 0.85rem;">
+                                {% trans "Contact us at" %}: {{ site_settings.phone|default:"+31 (0)6 12345678" }}
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Information Section -->
+<section class="contact-info-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>{% trans "Contact Information" %}</h2>
+            <p>{% trans "We're here to help. Reach out to us through any of these channels." %}</p>
+        </div>
+
+        <div class="row">
+            <!-- Address Card -->
+            <div class="col-md-4">
+                <div class="contact-info-card">
+                    <span class="icon icon-map-marker"></span>
+                    <h6>{% trans "Address" %}</h6>
+                    <p>{{ site_settings.address|default:"123 Restaurant Street, Amsterdam, Netherlands" }}</p>
+                </div>
+            </div>
+
+            <!-- Phone Card -->
+            <div class="col-md-4">
+                <div class="contact-info-card">
+                    <span class="icon icon-phone"></span>
+                    <h6>{% trans "Phone" %}</h6>
+                    <p><a href="tel:{{ site_settings.phone|default:'+31612345678' }}">{{ site_settings.phone|default:"+31 (0)6 12345678" }}</a></p>
+                </div>
+            </div>
+
+            <!-- Email Card -->
+            <div class="col-md-4">
+                <div class="contact-info-card">
+                    <span class="icon icon-envelope"></span>
+                    <h6>{% trans "Email" %}</h6>
+                    <p><a href="mailto:{{ site_settings.email|default:'info@sipandsunshine.com' }}">{{ site_settings.email|default:"info@sipandsunshine.com" }}</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

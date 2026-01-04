@@ -1,0 +1,281 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block title %}Sip and SunShine - Admin Login{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/admin-custom.css' %}">
+<style>
+    /* Admin Login Page Customization */
+    body {
+        background: linear-gradient(135deg, #f34949 0%, #6f5a5a 100%);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #login {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 0;
+        overflow: hidden;
+        max-width: 450px;
+        width: 95%;
+    }
+
+    .login-header {
+        background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%);
+        padding: 40px 20px;
+        text-align: center;
+        color: white;
+        border-bottom: 3px solid #ffc400;
+    }
+
+    .login-logo {
+        height: 60px;
+        width: auto;
+        margin-bottom: 15px;
+        filter: brightness(1.1);
+        display: inline-block;
+    }
+
+    .login-site-name {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-subtitle {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-top: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .login-content {
+        padding: 40px;
+    }
+
+    #login form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-row label {
+        color: #1a1a1a;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .form-row input[type="text"],
+    .form-row input[type="password"] {
+        padding: 12px 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    .form-row input[type="text"]:focus,
+    .form-row input[type="password"]:focus {
+        outline: none;
+        border-color: #f34949;
+        box-shadow: 0 0 0 4px rgba(243, 73, 73, 0.1);
+        background: #fafafa;
+    }
+
+    input[type="submit"] {
+        background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%);
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 10px;
+    }
+
+    input[type="submit"]:hover {
+        background: linear-gradient(135deg, #d63d3d 0%, #b82d2d 100%);
+        box-shadow: 0 8px 20px rgba(243, 73, 73, 0.3);
+        transform: translateY(-2px);
+    }
+
+    input[type="submit"]:active {
+        transform: translateY(0);
+    }
+
+    .login-message {
+        margin-bottom: 20px;
+        padding: 12px 14px;
+        border-radius: 6px;
+        border-left: 4px solid;
+    }
+
+    .login-message.error {
+        background: rgba(220, 53, 69, 0.1);
+        border-left-color: #dc3545;
+        color: #dc3545;
+    }
+
+    .login-message.warning {
+        background: rgba(255, 193, 7, 0.1);
+        border-left-color: #ffc107;
+        color: #856404;
+    }
+
+    .login-message.success {
+        background: rgba(40, 167, 69, 0.1);
+        border-left-color: #28a745;
+        color: #155724;
+    }
+
+    .login-footer {
+        padding: 20px 40px;
+        background: #f8f9fa;
+        border-top: 1px solid #e0e0e0;
+        text-align: center;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .login-footer p {
+        margin: 0;
+    }
+
+    .login-footer a {
+        color: #f34949;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .login-footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Error list styling */
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 15px 0;
+    }
+
+    .errorlist li {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        padding: 10px 12px;
+        border-left: 4px solid #dc3545;
+        border-radius: 3px;
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+        #login {
+            margin: 20px;
+        }
+
+        .login-header {
+            padding: 30px 20px;
+        }
+
+        .login-site-name {
+            font-size: 22px;
+        }
+
+        .login-content {
+            padding: 30px 20px;
+        }
+
+        .login-footer {
+            padding: 15px 20px;
+        }
+    }
+
+    /* Accessibility */
+    a:focus,
+    button:focus,
+    input:focus {
+        outline: 2px solid #f34949;
+        outline-offset: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="login">
+    <div class="login-header">
+        <img src="{% static 'images/logo.svg' %}" alt="Sip and SunShine" class="login-logo">
+        <h1 class="login-site-name">Sip and SunShine</h1>
+        <p class="login-subtitle">Restaurant Admin Portal</p>
+    </div>
+
+    <div class="login-content">
+        {% if form.errors %}
+            <div class="messagelist">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <div class="login-message error">
+                            <strong>{{ error }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if next %}
+            <div class="login-message warning">
+                Please log in to access the admin area.
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'admin:login' %}" class="login-form">
+            {% csrf_token %}
+            
+            {% if form.username %}
+                <div class="form-row">
+                    <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                    {{ form.username }}
+                </div>
+            {% endif %}
+
+            {% if form.password %}
+                <div class="form-row">
+                    <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                    {{ form.password }}
+                </div>
+            {% endif %}
+
+            <input type="submit" value="Sign In" />
+
+            {% if site_header %}
+                <input type="hidden" name="next" value="{% url 'admin:index' %}" />
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="login-footer">
+        <p>&copy; <script>document.write(new Date().getFullYear());</script> Sip and SunShine Restaurant</p>
+        <p style="margin-top: 8px; font-size: 11px;">Professional Restaurant Management System</p>
+    </div>
+</div>
+{% endblock %}

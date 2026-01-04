@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Order Confirmation" %} - #{{ order.order_number }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 100px; padding-bottom: 50px;">
+    
+    <div style="max-width: 800px; margin: 0 auto;">
+
+        {% if error %}
+            <!-- Error State -->
+            <div style="text-align: center; padding: 50px 20px;">
+                <div style="font-size: 64px; margin-bottom: 20px;">❌</div>
+                <h2 style="margin-bottom: 10px; color: #f34949;">{% trans "Order Error" %}</h2>
+                <p style="color: #666; margin-bottom: 30px;">{{ error }}</p>
+                <a href="{% url 'restaurant:menu' %}" class="btn btn-primary" style="background: #f34949; color: white; text-decoration: none; padding: 12px 30px; border-radius: 6px; display: inline-block;">
+                    ← {% trans "Back to Menu" %}
+                </a>
+            </div>
+        {% else %}
+            <!-- Success State -->
+            
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 40px;">
+                <div style="font-size: 80px; margin-bottom: 20px; animation: bounce 1s ease-in-out;">✅</div>
+                <h1 style="font-size: 36px; font-weight: 700; margin-bottom: 10px; color: #20c997;">
+                    {% trans "Order Confirmed!" %}
+                </h1>
+                <p style="color: #666; font-size: 16px;">
+                    {% trans "Thank you for your order. We're preparing it now." %}
+                </p>
+            </div>
+
+            <!-- Order Number & Details -->
+            <div style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; text-align: center;">
+                <div style="font-size: 14px; opacity: 0.9;">{% trans "Order Number" %}</div>
+                <div style="font-size: 36px; font-weight: 700; margin: 10px 0;">
+                    #{{ order.order_number }}
+                </div>
+                <div style="font-size: 14px; opacity: 0.9;">
+                    {% trans "Placed on" %} {{ order.created_at|date:"d M Y \a\t H:i" }}
+                </div>
+            </div>
+
+            <!-- Status Timeline -->
+            <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; margin-bottom: 30px;">
+                <h4 style="margin-bottom: 25px; font-weight: 700;">📋 {% trans "Order Status" %}</h4>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    
+                    <!-- Status Step 1 -->
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex-shrink: 0; width: 50px;">
+                            <div style="
+                                width: 40px; 
+                                height: 40px; 
+                                background: #20c997; 
+                                color: white; 
+                                border-radius: 50%; 
+                                display: flex; 
+                                align-items: center; 
+                                justify-content: center; 
+                                font-weight: 700;
+                                font-size: 18px;
+                            ">✓</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: #1a1a1a;">{% trans "Order Received" %}</div>
+                            <div style="font-size: 13px; color: #999;">
+                                {{ order.created_at|date:"d M Y \a\t H:i" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Step 2 -->
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex-shrink: 0; width: 50px;">
+                            <div style="
+                                width: 40px; 
+                                height: 40px; 
+                                background: {% if order.status == 'preparing' or order.status == 'ready' or order.status == 'out_for_delivery' or order.status == 'completed' %}#20c997{% else %}#e0e0e0{% endif %}; 
+                                color: white; 
+                                border-radius: 50%; 
+                                display: flex; 
+                                align-items: center; 
+                                justify-content: center; 
+                                font-weight: 700;
+                                font-size: 18px;
+                            ">👨‍🍳</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: #1a1a1a;">
+                                {% if order.status == 'preparing' or order.status == 'ready' or order.status == 'out_for_delivery' or order.status == 'completed' %}
+                                    {% trans "Preparing Your Order" %}
+                                {% else %}
+                                    {% trans "Waiting to Start" %}
+                                {% endif %}
+                            </div>
+                            <div style="font-size: 13px; color: #999;">
+                                {% if order.estimated_completion_time %}
+                                    {% trans "Est. ready:" %} {{ estimated_time }}
+                                {% else %}
+                                    {% trans "We'll notify you when it's ready" %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Step 3 -->
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex-shrink: 0; width: 50px;">
+                            <div style="
+                                width: 40px; 
+                                height: 40px; 
+                                background: {% if order.status == 'completed' %}#20c997{% elif order.order_type == 'delivery' and order.status == 'out_for_delivery' %}#20c997{% elif order.order_type == 'pickup' and order.status == 'ready' %}#20c997{% else %}#e0e0e0{% endif %}; 
+                                color: white; 
+                                border-radius: 50%; 
+                                display: flex; 
+                                align-items: center; 
+                                justify-content: center; 
+                                font-weight: 700;
+                                font-size: 18px;
+                            ">
+                                {% if order.order_type == 'delivery' %}🚚{% elif order.order_type == 'pickup' %}📦{% else %}🪑{% endif %}
+                            </div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: #1a1a1a;">
+                                {% if order.order_type == 'delivery' %}
+                                    {% trans "On the Way" %}
+                                {% elif order.order_type == 'pickup' %}
+                                    {% trans "Ready for Pickup" %}
+                                {% else %}
+                                    {% trans "Table Ready" %}
+                                {% endif %}
+                            </div>
+                            <div style="font-size: 13px; color: #999;">
+                                {% if order.order_type == 'delivery' %}
+                                    {% trans "Your order will be delivered soon" %}
+                                {% elif order.order_type == 'pickup' %}
+                                    {% trans "Come pick up your order" %}
+                                {% else %}
+                                    {% trans "Your table is ready" %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; margin-bottom: 30px;">
+                <h4 style="margin-bottom: 20px; font-weight: 700;">📦 {% trans "Order Items" %}</h4>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    {% for item in order_items %}
+                        <div style="display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #f34949;">
+                            <div>
+                                <div style="font-weight: 600; color: #1a1a1a;">{{ item.item_name }}</div>
+                                <div style="font-size: 13px; color: #999;">
+                                    {% trans "Qty:" %} {{ item.quantity }} {% trans "x" %} €{{ item.price }}
+                                    {% if item.special_instructions %}
+                                        <div style="margin-top: 5px; color: #f34949; font-style: italic;">📝 {{ item.special_instructions }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div style="font-weight: 700; color: #1a1a1a;">€{{ item.get_total }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div style="background: white; border: 2px solid #e0e0e0; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+                <h4 style="margin-bottom: 20px; font-weight: 700;">💰 {% trans "Order Summary" %}</h4>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px; font-size: 15px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #666;">{% trans "Subtotal:" %}</span>
+                        <span style="font-weight: 600;">€{{ order.subtotal }}</span>
+                    </div>
+                    {% if order.delivery_charge > 0 %}
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #666;">{% trans "Delivery Charge:" %}</span>
+                            <span style="font-weight: 600;">€{{ order.delivery_charge }}</span>
+                        </div>
+                    {% endif %}
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #666;">{% trans "Tax (21%):" %}</span>
+                        <span style="font-weight: 600;">€{{ order.tax }}</span>
+                    </div>
+                    <div style="border-top: 2px solid #e0e0e0; padding-top: 12px; display: flex; justify-content: space-between; font-size: 18px;">
+                        <span style="font-weight: 700;">{% trans "Total:" %}</span>
+                        <span style="color: #f34949; font-weight: 700;">€{{ order.total_amount }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery/Pickup Details -->
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+                <h4 style="margin-bottom: 20px; font-weight: 700;">
+                    {% if order.order_type == 'delivery' %}
+                        🚚 {% trans "Delivery Details" %}
+                    {% elif order.order_type == 'pickup' %}
+                        📦 {% trans "Pickup Details" %}
+                    {% else %}
+                        🪑 {% trans "Dine-In Details" %}
+                    {% endif %}
+                </h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <div style="color: #999; font-size: 13px; margin-bottom: 5px;">👤 {% trans "Name" %}</div>
+                        <div style="font-weight: 600; color: #1a1a1a;">{{ order.guest_name }}</div>
+                    </div>
+                    <div>
+                        <div style="color: #999; font-size: 13px; margin-bottom: 5px;">📱 {% trans "Phone" %}</div>
+                        <div style="font-weight: 600; color: #1a1a1a;">{{ order.guest_phone }}</div>
+                    </div>
+
+                    {% if order.order_type == 'delivery' %}
+                        <div style="grid-column: 1/-1;">
+                            <div style="color: #999; font-size: 13px; margin-bottom: 5px;">📍 {% trans "Delivery Address" %}</div>
+                            <div style="font-weight: 600; color: #1a1a1a;">
+                                {{ order.delivery_address }}<br>
+                                {{ order.delivery_city }} {{ order.delivery_postal_code }}
+                            </div>
+                        </div>
+                        {% if order.delivery_instructions %}
+                            <div style="grid-column: 1/-1;">
+                                <div style="color: #999; font-size: 13px; margin-bottom: 5px;">📝 {% trans "Delivery Instructions" %}</div>
+                                <div style="font-weight: 600; color: #1a1a1a;">{{ order.delivery_instructions }}</div>
+                            </div>
+                        {% endif %}
+                    {% elif order.order_type == 'pickup' %}
+                        <div style="grid-column: 1/-1;">
+                            <div style="color: #999; font-size: 13px; margin-bottom: 5px;">⏰ {% trans "Pickup Time" %}</div>
+                            <div style="font-weight: 600; color: #1a1a1a;">
+                                {% if order.preferred_pickup_time %}
+                                    {{ order.preferred_pickup_time|date:"H:i" }}
+                                {% else %}
+                                    {% trans "As soon as ready" %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div>
+                            <div style="color: #999; font-size: 13px; margin-bottom: 5px;">🪑 {% trans "Table" %}</div>
+                            <div style="font-weight: 600; color: #1a1a1a;">#{{ order.table_number }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Payment Status -->
+            <div style="background: {% if order.payment_status == 'paid' %}#d4edda{% else %}#fff3cd{% endif %}; border-left: 4px solid {% if order.payment_status == 'paid' %}#20c997{% else %}#ffc107{% endif %}; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">
+                    💳 {% if order.payment_status == 'paid' %}{% trans "Payment Confirmed" %}{% else %}{% trans "Payment Status" %}{% endif %}
+                </div>
+                <div style="font-size: 14px; color: #666;">
+                    {% if order.payment_method == 'cash' %}
+                        {% trans "Payment Method:" %} {% trans "Cash on Delivery" %}
+                        <br>
+                        <span style="color: #f34949; font-weight: 600;">{% trans "Please have cash ready when the delivery arrives." %}</span>
+                    {% elif order.payment_method == 'stripe' %}
+                        {% trans "Payment Method:" %} {% trans "Credit/Debit Card" %}
+                    {% elif order.payment_method == 'paypal' %}
+                        {% trans "Payment Method:" %} {% trans "PayPal" %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="/orders/tracking/?order={{ order.order_number }}" style="
+                    flex: 1;
+                    padding: 15px;
+                    background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%);
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    text-align: center;
+                    font-weight: 600;
+                    transition: all 0.3s;
+                    min-width: 200px;
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 25px rgba(243,73,73,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                    🔍 {% trans "Track Order" %}
+                </a>
+                <a href="{% url 'restaurant:menu' %}" style="
+                    flex: 1;
+                    padding: 15px;
+                    background: white;
+                    color: #f34949;
+                    border: 2px solid #f34949;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    text-align: center;
+                    font-weight: 600;
+                    transition: all 0.3s;
+                    min-width: 200px;
+                " onmouseover="this.style.background='rgba(243,73,73,0.05)';" onmouseout="this.style.background='white';">
+                    🍽️ {% trans "Order More" %}
+                </a>
+            </div>
+
+            <!-- Extra Info -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 30px; text-align: center;">
+                <p style="color: #666; font-size: 14px; margin: 0;">
+                    {% trans "A confirmation email has been sent to" %} <strong>{{ order.guest_email }}</strong>
+                    <br>
+                    {% trans "Questions?" %} <a href="/contact/" style="color: #f34949; text-decoration: none; font-weight: 600;">{% trans "Contact Us" %}</a>
+                </p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- Bounce Animation -->
+<style>
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+</style>
+
+{% endblock %}

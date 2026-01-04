@@ -1,0 +1,474 @@
+{% load i18n %}
+{# Order Review & Checkout Modal #}
+<div id="orderReviewModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            
+            <!-- Modal Header -->
+            <div class="modal-header" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 12px 12px 0 0; padding: 20px;">
+                <h5 class="modal-title" style="font-weight: 700; letter-spacing: 0.5px;">
+                    ✅ {% trans "Order Summary" %}
+                </h5>
+                <button type="button" class="btn-close" onclick="closeOrderReviewModal()" style="background: rgba(255,255,255,0.5); border: none; padding: 8px; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; font-size: 20px; color: white; display: flex; align-items: center; justify-content: center;" title="Close">
+                    ×
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 30px;">
+                
+                <!-- Order Type Badge -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+                    <span id="orderTypeBadge" style="
+                        padding: 8px 16px;
+                        border-radius: 20px;
+                        font-weight: 600;
+                        font-size: 13px;
+                        color: white;
+                        background: #17a2b8;
+                    "></span>
+                    <span style="color: #666; font-size: 13px;">
+                        <strong>{% trans "Order Type:" %}</strong> <span id="orderTypeDisplay"></span>
+                    </span>
+                </div>
+
+                <!-- Cart Items Review -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h6 style="margin-bottom: 15px; font-weight: 700; color: #1a1a1a;">📦 {% trans "Order Items" %}</h6>
+                    <div id="reviewItems" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Customer Details Review -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h6 style="margin-bottom: 15px; font-weight: 700; color: #1a1a1a;">👤 {% trans "Customer Details" %}</h6>
+                    <div id="reviewCustomerDetails" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px;">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Pricing Breakdown -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h6 style="margin-bottom: 15px; font-weight: 700; color: #1a1a1a;">💰 {% trans "Pricing Breakdown" %}</h6>
+                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #666;">{% trans "Subtotal:" %}</span>
+                            <span style="font-weight: 600;">€<span id="reviewSubtotal">0.00</span></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;" id="deliveryChargeRow" style="display: none;">
+                            <span style="color: #666;">{% trans "Delivery Charge:" %}</span>
+                            <span style="font-weight: 600;">€<span id="reviewDeliveryCharge">0.00</span></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #666;">{% trans "Tax (21%):" %}</span>
+                            <span style="font-weight: 600;">€<span id="reviewTax">0.00</span></span>
+                        </div>
+                        <div style="border-top: 2px solid #dee2e6; padding-top: 10px; display: flex; justify-content: space-between; font-size: 16px;">
+                            <span style="font-weight: 700; color: #1a1a1a;">{% trans "Total:" %}</span>
+                            <span style="color: #f34949; font-weight: 700;">€<span id="reviewTotal">0.00</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Selection -->
+                <div id="paymentSection" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h6 style="margin-bottom: 15px; font-weight: 700; color: #1a1a1a;">💳 {% trans "Payment Method" %}</h6>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        
+                        <!-- Cash Option -->
+                        <label style="display: flex; align-items: center; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; transition: all 0.3s;"
+                            onmouseover="this.style.borderColor='#f34949'; this.style.background='rgba(243,73,73,0.05)';"
+                            onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white';">
+                            <input type="radio" name="paymentMethod" value="cash" checked style="margin-right: 12px; cursor: pointer; width: 18px; height: 18px;">
+                            <div>
+                                <div style="font-weight: 600; color: #1a1a1a;">💵 {% trans "Cash on Delivery/Pickup" %}</div>
+                                <div style="font-size: 12px; color: #999;">{% trans "Pay when you receive/pick up your order" %}</div>
+                            </div>
+                        </label>
+
+                        <!-- Stripe Option -->
+                        <label style="display: flex; align-items: center; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; transition: all 0.3s;"
+                            onmouseover="this.style.borderColor='#f34949'; this.style.background='rgba(243,73,73,0.05)';"
+                            onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white';">
+                            <input type="radio" name="paymentMethod" value="stripe" style="margin-right: 12px; cursor: pointer; width: 18px; height: 18px;">
+                            <div>
+                                <div style="font-weight: 600; color: #1a1a1a;">💳 {% trans "Credit/Debit Card (Stripe)" %}</div>
+                                <div style="font-size: 12px; color: #999;">{% trans "Visa, Mastercard, Amex" %}</div>
+                            </div>
+                        </label>
+
+                        <!-- PayPal Option -->
+                        <label style="display: flex; align-items: center; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; cursor: pointer; transition: all 0.3s;"
+                            onmouseover="this.style.borderColor='#f34949'; this.style.background='rgba(243,73,73,0.05)';"
+                            onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white';">
+                            <input type="radio" name="paymentMethod" value="paypal" style="margin-right: 12px; cursor: pointer; width: 18px; height: 18px;">
+                            <div>
+                                <div style="font-weight: 600; color: #1a1a1a;">🅿️ {% trans "PayPal" %}</div>
+                                <div style="font-size: 12px; color: #999;">{% trans "Pay securely with your PayPal account" %}</div>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div style="display: flex; gap: 12px; align-items: flex-start; padding: 15px; background: rgba(243, 73, 73, 0.05); border-radius: 6px; border-left: 4px solid #f34949; margin-bottom: 20px;">
+                    <input type="checkbox" id="agreeTerms" style="margin-top: 3px; cursor: pointer; width: 18px; height: 18px;">
+                    <label for="agreeTerms" style="cursor: pointer; font-size: 13px; color: #666;">
+                        {% trans "I agree to the" %} 
+                        <a href="/terms/" target="_blank" style="color: #f34949; text-decoration: none; font-weight: 600;">{% trans "Terms & Conditions" %}</a> 
+                        {% trans "and" %} 
+                        <a href="/privacy/" target="_blank" style="color: #f34949; text-decoration: none; font-weight: 600;">{% trans "Privacy Policy" %}</a>
+                    </label>
+                </div>
+
+                <!-- Error Messages -->
+                <div id="orderReviewError" class="alert alert-danger" role="alert" style="display: none; margin-bottom: 15px; border-radius: 6px;"></div>
+
+                <!-- Success Message -->
+                <div id="orderProcessing" style="display: none; text-align: center; padding: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">⏳</div>
+                    <p style="color: #666;">{% trans "Processing your order..." %}</p>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="border-top: 1px solid #e0e0e0; padding: 20px; background: #f8f9fa; gap: 10px;">
+                <button type="button" class="btn btn-secondary" onclick="goBackToCustomerDetails()" style="border-radius: 6px;">
+                    ← {% trans "Back" %}
+                </button>
+                <button type="button" class="btn btn-primary" onclick="submitOrder()" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 6px; font-weight: 600; padding: 10px 30px;">
+                    {% trans "Place Order" %} 📤
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    function openOrderReviewModal() {
+        const modal = document.getElementById('orderReviewModal');
+        if (modal) {
+            modal.classList.add('show');
+            modal.style.display = 'block';
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+        }
+        
+        populateOrderReview();
+            // Prefill preferred payment method for logged-in users
+            try {
+                const preferred = (document.body.getAttribute('data-user-payment-method') || '').trim();
+                if (preferred) {
+                    const input = document.querySelector(`input[name="paymentMethod"][value="${preferred}"]`);
+                    if (input) input.checked = true;
+                }
+            } catch (e) {
+                // Ignore
+            }
+    }
+
+    function closeOrderReviewModal() {
+        const modal = document.getElementById('orderReviewModal');
+        if (modal) {
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+        }
+    }
+
+    function populateOrderReview() {
+        const cartItems = JSON.parse(sessionStorage.getItem('checkout_cart') || '[]');
+        const orderType = sessionStorage.getItem('checkout_order_type');
+        const customerData = JSON.parse(sessionStorage.getItem('checkout_customer_data') || '{}');
+        const subtotal = parseFloat(sessionStorage.getItem('checkout_subtotal') || '0');
+
+        // Hide payment method selection for dine-in (pay at table)
+        const paymentSection = document.getElementById('paymentSection');
+        if (paymentSection) {
+            paymentSection.style.display = orderType === 'seated' ? 'none' : 'block';
+        }
+
+        // Update order type display
+        const orderTypeDisplay = {
+            'seated': '🪑 Dine-In',
+            'pickup': '🛒 Pickup',
+            'delivery': '🚚 Delivery'
+        };
+        document.getElementById('orderTypeDisplay').textContent = orderTypeDisplay[orderType] || orderType;
+        document.getElementById('orderTypeBadge').textContent = orderTypeDisplay[orderType] || orderType;
+
+        // Update badge color
+        const colors = {
+            'seated': '#17a2b8',
+            'pickup': '#20c997',
+            'delivery': '#ffc107'
+        };
+        document.getElementById('orderTypeBadge').style.background = colors[orderType] || '#999';
+
+        // Populate items
+        let itemsHTML = '';
+        cartItems.forEach(item => {
+            const itemTotal = (item.price * item.quantity).toFixed(2);
+            itemsHTML += `
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #dee2e6;">
+                    <div>
+                        <div style="font-weight: 600; color: #1a1a1a;">${item.name}</div>
+                        <div style="font-size: 12px; color: #999;">x${item.quantity} @ €${item.price.toFixed(2)}</div>
+                        ${item.special_instructions ? `<div style="font-size: 12px; color: #f34949; font-style: italic;">📝 ${item.special_instructions}</div>` : ''}
+                    </div>
+                    <div style="font-weight: 600; color: #1a1a1a;">€${itemTotal}</div>
+                </div>
+            `;
+        });
+        document.getElementById('reviewItems').innerHTML = itemsHTML;
+
+        // Calculate totals
+        const tax = (subtotal * 0.21).toFixed(2);
+        let total = (subtotal + parseFloat(tax)).toFixed(2);
+        let deliveryCharge = 0;
+
+        // Add delivery charge if delivery order
+        if (orderType === 'delivery') {
+            const fixed = parseFloat(sessionStorage.getItem('delivery_charge_fixed') || '2.50') || 0;
+            const percent = parseFloat(sessionStorage.getItem('delivery_charge_percent') || '0') || 0;
+            const percentCharge = ((subtotal * percent) / 100);
+            deliveryCharge = Math.round((fixed + percentCharge) * 100) / 100;
+            total = (subtotal + parseFloat(tax) + deliveryCharge).toFixed(2);
+            document.getElementById('deliveryChargeRow').style.display = 'flex';
+            document.getElementById('reviewDeliveryCharge').textContent = deliveryCharge.toFixed(2);
+        } else {
+            document.getElementById('deliveryChargeRow').style.display = 'none';
+        }
+
+        document.getElementById('reviewSubtotal').textContent = subtotal.toFixed(2);
+        document.getElementById('reviewTax').textContent = tax;
+        document.getElementById('reviewTotal').textContent = total;
+
+        // Populate customer details
+        let detailsHTML = '';
+        detailsHTML += `
+            <div>
+                <div style="color: #999; font-size: 12px;">{% trans "Name" %}</div>
+                <div style="font-weight: 600; color: #1a1a1a;">${customerData.name || ''}</div>
+            </div>
+            <div>
+                <div style="color: #999; font-size: 12px;">{% trans "Phone" %}</div>
+                <div style="font-weight: 600; color: #1a1a1a;">${customerData.phone || ''}</div>
+            </div>
+        `;
+
+        if (customerData.email) {
+            detailsHTML += `
+                <div>
+                    <div style="color: #999; font-size: 12px;">{% trans "Email" %}</div>
+                    <div style="font-weight: 600; color: #1a1a1a;">${customerData.email}</div>
+                </div>
+            `;
+        }
+
+        if (orderType === 'seated' && customerData.table_number) {
+            detailsHTML += `
+                <div>
+                    <div style="color: #999; font-size: 12px;">{% trans "Table" %}</div>
+                    <div style="font-weight: 600; color: #1a1a1a;">#${customerData.table_number}</div>
+                </div>
+            `;
+        }
+
+        if (orderType === 'delivery') {
+            detailsHTML += `
+                <div style="grid-column: 1/-1;">
+                    <div style="color: #999; font-size: 12px;">📍 {% trans "Delivery Address" %}</div>
+                    <div style="font-weight: 600; color: #1a1a1a;">${customerData.delivery_address}, ${customerData.delivery_city} ${customerData.delivery_postal_code}</div>
+                </div>
+            `;
+            if (customerData.delivery_instructions) {
+                detailsHTML += `
+                    <div style="grid-column: 1/-1;">
+                        <div style="color: #999; font-size: 12px;">{% trans "Delivery Instructions" %}</div>
+                        <div style="font-weight: 600; color: #1a1a1a;">${customerData.delivery_instructions}</div>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('reviewCustomerDetails').innerHTML = detailsHTML;
+    }
+
+    function goBackToCustomerDetails() {
+        try {
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const step4 = document.getElementById('step4');
+            if (step4) step4.style.opacity = '0.5';
+            if (step3) step3.style.opacity = '0.5';
+            if (step2) step2.style.opacity = '1';
+        } catch (e) {
+            // Ignore UI update errors
+        }
+        closeOrderReviewModal();
+        setTimeout(() => {
+            const orderType = sessionStorage.getItem('checkout_order_type');
+            document.getElementById('customerDetailsModal').classList.add('show');
+            document.getElementById('customerDetailsModal').style.display = 'block';
+        }, 300);
+    }
+
+    function submitOrder() {
+        // Validate terms agreement
+        if (!document.getElementById('agreeTerms').checked) {
+            showOrderReviewError('{% trans "Please agree to terms and conditions" %}');
+            return;
+        }
+
+        const orderType = sessionStorage.getItem('checkout_order_type');
+        // For dine-in, default to cash/pay-later (no payment selection)
+        const paymentMethod = orderType === 'seated'
+            ? 'cash'
+            : document.querySelector('input[name="paymentMethod"]:checked').value;
+
+        // Update checkout progress UI if present
+        try {
+            const step3 = document.getElementById('step3');
+            const step4 = document.getElementById('step4');
+            if (step3) step3.style.opacity = '0.5';
+            if (step4) step4.style.opacity = '1';
+        } catch (e) {
+            // Ignore UI update errors
+        }
+        
+        // Show processing
+        document.getElementById('orderProcessing').style.display = 'block';
+        
+        // TODO: Send order to backend
+        console.log('Submitting order with payment method:', paymentMethod);
+        
+        // Simulate processing
+        setTimeout(() => {
+            // Call API to create order
+            const cartItems = JSON.parse(sessionStorage.getItem('checkout_cart') || '[]');
+            const customerData = JSON.parse(sessionStorage.getItem('checkout_customer_data') || '{}');
+            const subtotal = parseFloat(sessionStorage.getItem('checkout_subtotal') || '0');
+
+            const orderData = {
+                order_type: orderType,
+                payment_method: paymentMethod,
+                guest_name: customerData.name,
+                guest_email: customerData.email,
+                guest_phone: customerData.phone,
+                table_number: customerData.table_number || null,
+                preferred_pickup_time: customerData.preferred_pickup_time || null,
+                delivery_address: customerData.delivery_address || '',
+                delivery_city: customerData.delivery_city || '',
+                delivery_postal_code: customerData.delivery_postal_code || '',
+                delivery_instructions: customerData.delivery_instructions || '',
+                special_requests: customerData.special_requests || '',
+                items: cartItems
+            };
+
+            // Link order to logged-in user when available
+            try {
+                const userId = document.body.getAttribute('data-user-id');
+                if (userId) {
+                    orderData.user_id = parseInt(userId);
+                }
+            } catch (e) {
+                // Ignore
+            }
+
+            // API call
+            fetch('/api/orders/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Clear checkout session
+                    sessionStorage.removeItem('checkout_cart');
+                    sessionStorage.removeItem('checkout_subtotal');
+                    sessionStorage.removeItem('checkout_order_type');
+                    sessionStorage.removeItem('checkout_customer_data');
+
+                    // Clear persistent cart so badge/UI resets
+                    try {
+                        localStorage.removeItem('sip_sunshine_cart');
+                        if (window.cart && typeof window.cart.updateCartUI === 'function') {
+                            window.cart.items = [];
+                            window.cart.updateCartUI();
+                        }
+                    } catch (e) {
+                        // Ignore
+                    }
+                    
+                    // Redirect to confirmation
+                    window.location.href = `/orders/confirmation/${data.order_id}/`;
+                } else {
+                    showOrderReviewError(data.message || '{% trans "Failed to create order" %}');
+                    document.getElementById('orderProcessing').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showOrderReviewError('{% trans "An error occurred. Please try again." %}');
+                document.getElementById('orderProcessing').style.display = 'none';
+            });
+        }, 1000);
+    }
+
+    function showOrderReviewError(message) {
+        const errorDiv = document.getElementById('orderReviewError');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        errorDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function proceedToOrderReview() {
+        openOrderReviewModal();
+    }
+</script>
+
+<!-- Modal Styles -->
+<style>
+    #orderReviewModal input[type="radio"] {
+        cursor: pointer;
+    }
+
+    #orderReviewModal label {
+        transition: all 0.3s ease;
+    }
+
+    @media (max-width: 576px) {
+        #orderReviewModal .modal-body {
+            padding: 20px !important;
+        }
+        #reviewCustomerDetails {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>

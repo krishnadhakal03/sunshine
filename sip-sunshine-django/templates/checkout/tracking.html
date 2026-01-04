@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<section class="ftco-section">
+  <div class="container">
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-8 text-center">
+        <h2 class="mb-3">{% trans "Track Your Order" %}</h2>
+        <p class="text-muted">{% trans "Enter your order reference (e.g., SIP-000015)" %}</p>
+      </div>
+    </div>
+
+    <div class="row justify-content-center mb-4">
+      <div class="col-md-8">
+        <form method="get" action="" class="p-3 bg-white" style="border-radius: 10px;">
+          <div class="form-group mb-3">
+            <label for="order" class="font-weight-bold">{% trans "Order Reference" %}</label>
+            <input id="order" name="order" class="form-control" value="{{ order_query|default:'' }}" placeholder="SIP-000015" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); border: none;">
+            {% trans "Track" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        {% if error %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endif %}
+
+        {% if order %}
+          <div class="p-4 bg-white" style="border-radius: 12px;">
+            <div class="d-flex flex-wrap justify-content-between" style="gap: 12px;">
+              <div>
+                <div class="text-muted" style="font-size: 12px;">{% trans "Order" %}</div>
+                <div style="font-weight: 700;">{{ order.order_number }}</div>
+              </div>
+              <div>
+                <div class="text-muted" style="font-size: 12px;">{% trans "Status" %}</div>
+                <div style="font-weight: 700; text-transform: capitalize;">{{ order.status|default:"pending" }}</div>
+              </div>
+              <div>
+                <div class="text-muted" style="font-size: 12px;">{% trans "Type" %}</div>
+                <div style="font-weight: 700;">{{ order.get_order_type_display }}</div>
+              </div>
+              <div>
+                <div class="text-muted" style="font-size: 12px;">{% trans "Estimated" %}</div>
+                <div style="font-weight: 700;">{% if estimated_time %}{{ estimated_time }}{% else %}{% trans "Soon" %}{% endif %}</div>
+              </div>
+            </div>
+
+            <hr />
+
+            <h5 class="mb-3">{% trans "Items" %}</h5>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              {% for item in order_items %}
+                <div class="d-flex justify-content-between" style="gap: 12px;">
+                  <div>
+                    <div style="font-weight: 600;">{{ item.item_name }}</div>
+                    {% if item.special_instructions %}
+                      <div class="text-muted" style="font-size: 12px;">{{ item.special_instructions }}</div>
+                    {% endif %}
+                  </div>
+                  <div style="font-weight: 700; white-space: nowrap;">x{{ item.quantity }}</div>
+                </div>
+              {% empty %}
+                <div class="text-muted">{% trans "No items found for this order." %}</div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

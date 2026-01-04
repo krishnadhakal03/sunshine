@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<section class="ftco-section">
+  <div class="container">
+    <div class="row justify-content-center mb-5">
+      <div class="col-md-8 text-center">
+        <h2 class="mb-3">{% trans "Terms & Conditions" %}</h2>
+        <p class="text-muted">{% trans "This page is provided for your website terms." %}</p>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="p-4 bg-white">
+          <p class="text-muted mb-0">{% trans "Add your terms and conditions content here." %}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

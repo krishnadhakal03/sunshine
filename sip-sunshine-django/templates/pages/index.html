@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{{ page.meta_title|default:page.title }} - Sip and SunShine{% endblock %}
+
+{% block content %}
+<!-- Home Slider -->
+<section class="home-slider js-fullheight owl-carousel bg-white">
+    <div class="slider-item js-fullheight">
+        <div class="overlay"></div>
+        <div class="container-fluid p-0">
+            <div class="row d-md-flex no-gutters slider-text js-fullheight align-items-center justify-content-end" data-scrollax-parent="true">
+                <div class="one-third order-md-last img js-fullheight" style="background-image:url('{% static 'images/bg_3.jpg' %}');">
+                    <div class="overlay"></div>
+                </div>
+                <div class="one-forth d-flex js-fullheight align-items-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+                    <div class="text mt-md-5">
+                        <h1 class="mb-4">{% trans "Eat Healthy" %} <br> {% trans "and Natural Foods" %}</h1>
+                        <p>{% trans "Experience the finest cuisine prepared with fresh, locally-sourced ingredients. Our expert chefs craft every dish with passion and precision." %}</p>
+                        <div class="thumb mt-4 mb-3 d-flex">
+                            <a href="{% url 'restaurant:menu' %}#appetizers" class="thumb-menu pr-md-4 text-center">
+                                <div class="img" style="background-image: url('{% static 'images/breakfast-1.jpg' %}');"></div>
+                                <h4>{% trans "Fresh Appetizers" %}</h4>
+                            </a>
+                            <a href="{% url 'restaurant:menu' %}#main_courses" class="thumb-menu pr-md-4 text-center">
+                                <div class="img" style="background-image: url('{% static 'images/dinner-1.jpg' %}');"></div>
+                                <h4>{% trans "Main Courses" %}</h4>
+                            </a>
+                            <a href="{% url 'restaurant:menu' %}#desserts" class="thumb-menu pr-md-4 text-center">
+                                <div class="img" style="background-image: url('{% static 'images/dessert-1.jpg' %}');"></div>
+                                <h4>{% trans "Delicious Desserts" %}</h4>
+                            </a>
+                        </div>
+                        <p><a href="{% url 'restaurant:reservation' %}" class="btn btn-primary px-4 py-3 mt-3">{% trans "Book A Table" %}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-item js-fullheight">
+        <div class="overlay"></div>
+        <div class="container-fluid p-0">
+            <div class="row d-md-flex no-gutters slider-text js-fullheight align-items-center justify-content-end" data-scrollax-parent="true">
+                <div class="one-third order-md-last img js-fullheight" style="background-image:url('{% static 'images/bg_2.jpg' %}');">
+                    <div class="overlay"></div>
+                </div>
+                <div class="one-forth d-flex js-fullheight align-items-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+                    <div class="text mt-md-5">
+                        <h1 class="mb-4">{% trans "Since 2010" %} <br> {% trans "Premium Quality" %}</h1>
+                        <p>{% trans "Over a decade of culinary excellence, serving memorable dining experiences to our valued guests." %}</p>
+                        <div class="thumb mt-4 mb-3 d-flex">
+                            <a href="{% url 'restaurant:menu' %}#beverages" class="thumb-menu pr-md-4 text-center">
+                                <div class="img" style="background-image: url('{% static 'images/wine-1.jpg' %}');"></div>
+                                <h4>{% trans "Fine Wines" %}</h4>
+                            </a>
+                            <a href="{% url 'restaurant:menu' %}#breakfast" class="thumb-menu pr-md-4 text-center">
+                                <div class="img" style="background-image: url('{% static 'images/lunch-1.jpg' %}');"></div>
+                                <h4>{% trans "Lunch Menu" %}</h4>
+                            </a>
+                            <a href="{% url 'restaurant:menu' %}#drinks" class="thumb-menu pr-md-4 text-center">
+                                <div class="img" style="background-image: url('{% static 'images/drink-1.jpg' %}');"></div>
+                                <h4>{% trans "Cocktails" %}</h4>
+                            </a>
+                        </div>
+                        <p><a href="{% url 'restaurant:about' %}" class="btn btn-primary px-4 py-3 mt-3">{% trans "Learn More" %}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="ftco-section ftco-wrap-about px-md-0">
+    <div class="row no-gutters">
+        <div class="col-md-6 p-md-5 img img-2 d-flex justify-content-center align-items-center" style="background-image: url('{% static 'images/about.jpg' %}');">
+        </div>
+        <div class="col-md-6 wrap-about ftco-animate">
+            <div class="heading-section mb-5 ml-md-0">
+                <span class="subheading">{% trans "About Our Restaurant" %}</span>
+                <h2 class="mb-4">{% trans "Sip and SunShine" %}</h2>
+            </div>
+            <p>{{ page.content|safe }}</p>
+            <p><a href="{% url 'restaurant:about' %}" class="btn btn-primary mt-4 px-4 py-3">{% trans "Read More" %}</a></p>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Menu Items -->
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 heading-section ftco-animate text-center">
+                <span class="subheading">{% trans "Menu" %}</span>
+                <h2 class="mb-4">{% trans "Featured Dishes" %}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <!-- Column 1: First 2 items -->
+            <div class="col-md-6 col-lg-4 menu-wrap">
+                <div class="heading-menu text-center ftco-animate">
+                    <h3>{% trans "Featured" %}</h3>
+                </div>
+                {% for item in menu_items|slice:":2" %}
+                <div class="menus d-flex ftco-animate">
+                    <div class="menu-img img" style="background-image: url('{% static 'images/breakfast-1.jpg' %}');"></div>
+                    <div class="text">
+                        <div class="d-flex">
+                            <div class="one-half">
+                                <h3>{{ item.name }}</h3>
+                            </div>
+                            <div class="one-forth">
+                                <span class="price">${{ item.price }}</span>
+                            </div>
+                        </div>
+                        <p><span>{{ item.description }}</span></p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Column 2: Next 2 items -->
+            <div class="col-md-6 col-lg-4 menu-wrap">
+                <div class="heading-menu text-center ftco-animate">
+                    <h3>{% trans "Specials" %}</h3>
+                </div>
+                {% for item in menu_items|slice:"2:4" %}
+                <div class="menus d-flex ftco-animate">
+                    <div class="menu-img img" style="background-image: url('{% static 'images/lunch-1.jpg' %}');"></div>
+                    <div class="text">
+                        <div class="d-flex">
+                            <div class="one-half">
+                                <h3>{{ item.name }}</h3>
+                            </div>
+                            <div class="one-forth">
+                                <span class="price">${{ item.price }}</span>
+                            </div>
+                        </div>
+                        <p><span>{{ item.description }}</span></p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Column 3: Last 2 items -->
+            <div class="col-md-6 col-lg-4 menu-wrap">
+                <div class="heading-menu text-center ftco-animate">
+                    <h3>{% trans "Favorites" %}</h3>
+                </div>
+                {% for item in menu_items|slice:"4:6" %}
+                <div class="menus d-flex ftco-animate">
+                    <div class="menu-img img" style="background-image: url('{% static 'images/dinner-1.jpg' %}');"></div>
+                    <div class="text">
+                        <div class="d-flex">
+                            <div class="one-half">
+                                <h3>{{ item.name }}</h3>
+                            </div>
+                            <div class="one-forth">
+                                <span class="price">${{ item.price }}</span>
+                            </div>
+                        </div>
+                        <p><span>{{ item.description }}</span></p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- View Full Menu CTA -->
+        <div class="row mt-5 pt-5">
+            <div class="col-md-12 text-center">
+                <p class="mb-4" style="font-size: 16px;">{% trans "Discover more delicious dishes from our complete menu" %}</p>
+                <a href="{% url 'restaurant:menu' %}" class="btn btn-primary px-5 py-3 mt-2">{% trans "View Full Menu" %}</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Blog Posts -->
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 heading-section ftco-animate text-center">
+                <span class="subheading">{% trans "Blog" %}</span>
+                <h2 class="mb-4">{% trans "Recent Stories" %}</h2>
+            </div>
+        </div>
+        <div class="row d-flex">
+            {% for post in blog_posts %}
+                {% if post.slug %}
+                <div class="col-md-6 col-lg-4 ftco-animate">
+                    <div class="blog-entry align-self-stretch">
+                        {% if post.featured_image %}
+                            <a href="{% url 'restaurant:blog-detail' slug=post.slug %}" class="block-20" style="background-image: url('{{ post.featured_image.url }}');">
+                            </a>
+                        {% endif %}
+                        <div class="text">
+                            <div class="d-flex align-items-center mb-4 mt-2">
+                                <div class="one">
+                                    <span class="day">{{ post.published_at|date:"d" }}</span>
+                                    <span class="mos">{{ post.published_at|date:"M" }}</span>
+                                </div>
+                                <div class="two">
+                                    <span class="yr">{{ post.published_at|date:"Y" }}</span>
+                                    <span class="author">{{ post.author }}</span>
+                                </div>
+                            </div>
+                            <h3 class="heading"><a href="{% url 'restaurant:blog-detail' slug=post.slug %}">{{ post.title }}</a></h3>
+                            <p>{{ post.excerpt|truncatewords:20 }}</p>
+                            <p><a href="{% url 'restaurant:blog-detail' slug=post.slug %}" class="btn btn-primary">{% trans "Read More" %}</a></p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="ftco-counter ftco-section img ftco-no-pb" id="section-counter" style="background-image: url('{% static "images/bg_2.jpg" %}');">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="heading-section heading-section-white ftco-animate mb-4 text-center">
+                    <h2 class="mb-4">{% trans "Make a Reservation" %}</h2>
+                    <p>{% trans "Join us for an unforgettable dining experience" %}</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p><a href="{% url 'restaurant:reservation' %}" class="btn btn-primary px-5 py-3">{% trans "Reserve Now" %}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

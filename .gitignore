@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Django
+*.log
+local_settings.py
+
+# SQLite DB (local dev)
+db.sqlite3
+**/db.sqlite3
+
+# Collected static output
+sip-sunshine-django/staticfiles/
+**/staticfiles/
+
+# User uploads (keep sample media if you want; otherwise ignore)
+# Uncomment to ignore all media uploads:
+# sip-sunshine-django/media/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.testmondata
+
+# Playwright artifacts
+ms-playwright/
+playwright-report/
+test-results/
+
+# Logs/output
+/testlogs/
+*.out
+
+# Source template dump (not used at runtime)
+kusina-master/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

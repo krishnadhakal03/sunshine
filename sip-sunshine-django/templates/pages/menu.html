@@ -1,0 +1,877 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Menu - Specialties" %} - Sip and SunShine{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Menu Tab Styles */
+    .menu-tabs {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 40px;
+    }
+    
+    .menu-tab-btn {
+        background: transparent;
+        border: 2px solid #f34949;
+        color: #f34949;
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .menu-tab-btn:hover {
+        background: #f34949;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(243, 73, 73, 0.3);
+    }
+    
+    .menu-tab-btn.active {
+        background: #f34949;
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(243, 73, 73, 0.4);
+    }
+    
+    .menu-tab-content {
+        display: none;
+    }
+    
+    .menu-tab-content.active {
+        display: block;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Enhanced Menu Item Card */
+    .menu-item-card {
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .menu-item-card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+    
+    .menu-item-image-wrapper {
+        position: relative;
+        overflow: hidden;
+        height: 200px;
+        background: #f5f5f5;
+    }
+    
+    .menu-item-image {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.4s ease, filter 0.4s ease;
+        cursor: zoom-in;
+    }
+    
+    .menu-item-card:hover .menu-item-image {
+        transform: scale(1.15);
+        filter: brightness(1.1);
+    }
+    
+    .menu-item-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #f34949;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .menu-item-content {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .menu-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+        gap: 10px;
+    }
+    
+    .menu-item-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0;
+        flex: 1;
+    }
+    
+    .menu-item-price {
+        font-size: 20px;
+        font-weight: 700;
+        color: #f34949;
+        white-space: nowrap;
+    }
+    
+    .menu-item-description {
+        color: #666;
+        font-size: 14px;
+        margin: 10px 0;
+        flex-grow: 1;
+        line-height: 1.5;
+    }
+    
+    .menu-item-action {
+        margin-top: auto;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .menu-item-btn {
+        flex: 1;
+        padding: 10px 15px;
+        border: 2px solid #f34949;
+        background: transparent;
+        color: #f34949;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .menu-item-btn:hover {
+        background: #f34949;
+        color: #fff;
+    }
+    
+    /* Modal for enlarged image */
+    .image-modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .image-modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .image-modal-content {
+        position: relative;
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .image-modal-img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    
+    .image-modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 28px;
+        font-weight: bold;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.5);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .image-modal-close:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+    
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+    
+    /* Order Modal Styles */
+    .order-modal {
+        display: none;
+        position: fixed;
+        z-index: 3000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .order-modal.active {
+        display: flex;
+    }
+    
+    .order-modal-content {
+        background: #fff;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .order-modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 28px;
+        font-weight: bold;
+        color: #999;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    
+    .order-modal-close:hover {
+        color: #1a1a1a;
+    }
+    
+    .order-modal-header {
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f34949;
+    }
+    
+    .order-modal-header h2 {
+        margin: 0 0 5px 0;
+        color: #1a1a1a;
+        font-size: 24px;
+    }
+    
+    .order-modal-item-display {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        border-left: 4px solid #f34949;
+    }
+    
+    .order-modal-item-name {
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 5px;
+    }
+    
+    .order-modal-item-price {
+        color: #f34949;
+        font-weight: 600;
+    }
+    
+    .order-form-group {
+        margin-bottom: 15px;
+    }
+    
+    .order-form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #1a1a1a;
+        font-size: 14px;
+    }
+    
+    .order-form-input,
+    .order-form-select,
+    .order-form-textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-family: inherit;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+    }
+    
+    .order-form-input:focus,
+    .order-form-select:focus,
+    .order-form-textarea:focus {
+        outline: none;
+        border-color: #f34949;
+        box-shadow: 0 0 0 3px rgba(243, 73, 73, 0.1);
+    }
+    
+    .order-form-textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+    
+    .order-quantity-selector {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .order-qty-btn {
+        background: #f34949;
+        color: #fff;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+    
+    .order-qty-btn:hover {
+        background: #d63d3d;
+    }
+    
+    .order-qty-display {
+        min-width: 50px;
+        text-align: center;
+        font-weight: 600;
+        color: #1a1a1a;
+        font-size: 18px;
+    }
+    
+    .order-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+    }
+    
+    .order-btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 14px;
+    }
+    
+    .order-btn-submit {
+        background: #f34949;
+        color: #fff;
+    }
+    
+    .order-btn-submit:hover {
+        background: #d63d3d;
+        box-shadow: 0 5px 15px rgba(243, 73, 73, 0.3);
+    }
+    
+    .order-btn-cancel {
+        background: #eee;
+        color: #666;
+    }
+    
+    .order-btn-cancel:hover {
+        background: #ddd;
+    }
+    
+    .order-type-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .order-type-option {
+        flex: 1;
+    }
+    
+    .order-type-option input {
+        display: none;
+    }
+    
+    .order-type-label {
+        display: block;
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: #f9f9f9;
+    }
+    
+    .order-type-option input:checked + .order-type-label {
+        border-color: #f34949;
+        background: rgba(243, 73, 73, 0.1);
+        color: #f34949;
+    }
+    
+    .order-type-option label {
+        cursor: pointer;
+    }
+    
+    .table-number-field {
+        display: none;
+    }
+    
+    .table-number-field.active {
+        display: block;
+    }
+    
+    @media (max-width: 768px) {
+        .menu-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .menu-tabs {
+            margin-bottom: 30px;
+        }
+        
+        .menu-tab-btn {
+            padding: 8px 15px;
+            font-size: 12px;
+        }
+        
+        .order-modal-content {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_4.jpg' %}');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">{% trans "Specialties" %}</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'restaurant:home' %}">{% trans "Home" %} <i class="ion-ios-arrow-forward"></i></a></span> <span>{% trans "Menu" %} <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Menu Section with Tabs -->
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-2">
+            <div class="col-md-7 text-center heading-section ftco-animate">
+                <span class="subheading">{% trans "Specialties" %}</span>
+                <h2 class="mb-4">{% trans "Our Menu" %}</h2>
+                <p>{% trans "Explore our delicious selection of breakfast specialties, BBQ favorites, and premium beverages" %}</p>
+            </div>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-12 text-center">
+                <div class="menu-tabs">
+                    <button class="menu-tab-btn active" onclick="showTab(event, 'appetizers')">{% trans "Appetizers" %}</button>
+                    <button class="menu-tab-btn" onclick="showTab(event, 'breakfast')">{% trans "Breakfast" %}</button>
+                    <button class="menu-tab-btn" onclick="showTab(event, 'main_courses')">{% trans "Main Courses" %}</button>
+                    <button class="menu-tab-btn" onclick="showTab(event, 'bbq')">{% trans "BBQ" %}</button>
+                    <button class="menu-tab-btn" onclick="showTab(event, 'desserts')">{% trans "Desserts" %}</button>
+                    <button class="menu-tab-btn" onclick="showTab(event, 'beverages')">{% trans "Beverages" %}</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Appetizers Tab -->
+        <div id="appetizers" class="menu-tab-content active">
+            <div class="menu-grid">
+                {% for item in appetizers %}
+                <div class="menu-item-card ftco-animate">
+                    <div class="menu-item-image-wrapper">
+                        {% if item.image %}
+                        <div class="menu-item-image" style="background-image: url('{{ item.image.url }}');" onclick="openImageModal(event)"></div>
+                        {% else %}
+                        <div class="menu-item-image" style="background-image: url('{% static 'images/placeholder.jpg' %}'); background-color: #f5f5f5;" onclick="openImageModal(event)"></div>
+                        {% endif %}
+                        <span class="menu-item-badge">NEW</span>
+                    </div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-header">
+                            <h3 class="menu-item-name">{{ item.name }}</h3>
+                            <span class="menu-item-price">${{ item.price }}</span>
+                        </div>
+                        <p class="menu-item-description">{{ item.description }}</p>
+                        <div class="menu-item-action">
+                            <button
+                                type="button"
+                                class="menu-item-btn"
+                                data-add-to-cart="1"
+                                data-open-cart="1"
+                                data-item-id="{{ item.id }}"
+                                data-item-name="{{ item.name }}"
+                                data-item-price="{{ item.price }}"
+                                data-item-desc="{{ item.description|default_if_none:'' }}"
+                                data-item-image="{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}"
+                                data-item-category="{{ item.category }}"
+                            >{% trans "Add to Order" %}</button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center w-100">{% trans "No appetizers available" %}</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Main Courses Tab -->
+        <div id="main_courses" class="menu-tab-content">
+            <div class="menu-grid">
+                {% for item in main_courses %}
+                <div class="menu-item-card ftco-animate">
+                    <div class="menu-item-image-wrapper">
+                        {% if item.image %}
+                        <div class="menu-item-image" style="background-image: url('{{ item.image.url }}');" onclick="openImageModal(event)"></div>
+                        {% else %}
+                        <div class="menu-item-image" style="background-image: url('{% static 'images/placeholder.jpg' %}'); background-color: #f5f5f5;" onclick="openImageModal(event)"></div>
+                        {% endif %}
+                        <span class="menu-item-badge">SPECIAL</span>
+                    </div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-header">
+                            <h3 class="menu-item-name">{{ item.name }}</h3>
+                            <span class="menu-item-price">${{ item.price }}</span>
+                        </div>
+                        <p class="menu-item-description">{{ item.description }}</p>
+                        <div class="menu-item-action">
+                            <button
+                                type="button"
+                                class="menu-item-btn"
+                                data-add-to-cart="1"
+                                data-open-cart="1"
+                                data-item-id="{{ item.id }}"
+                                data-item-name="{{ item.name }}"
+                                data-item-price="{{ item.price }}"
+                                data-item-desc="{{ item.description|default_if_none:'' }}"
+                                data-item-image="{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}"
+                                data-item-category="{{ item.category }}"
+                            >{% trans "Add to Order" %}</button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center w-100">{% trans "No main courses available" %}</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Breakfast Tab -->
+        <div id="breakfast" class="menu-tab-content">
+            <div class="menu-grid">
+                {% for item in appetizers|slice:"0:3" %}
+                <div class="menu-item-card ftco-animate">
+                    <div class="menu-item-image-wrapper">
+                        {% if item.image %}
+                        <div class="menu-item-image" style="background-image: url('{{ item.image.url }}');" onclick="openImageModal(event)"></div>
+                        {% else %}
+                        <div class="menu-item-image" style="background-image: url('{% static 'images/placeholder.jpg' %}'); background-color: #f5f5f5;" onclick="openImageModal(event)"></div>
+                        {% endif %}
+                        <span class="menu-item-badge">MORNING</span>
+                    </div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-header">
+                            <h3 class="menu-item-name">{{ item.name }}</h3>
+                            <span class="menu-item-price">${{ item.price }}</span>
+                        </div>
+                        <p class="menu-item-description">{{ item.description }}</p>
+                        <div class="menu-item-action">
+                            <button
+                                type="button"
+                                class="menu-item-btn"
+                                data-add-to-cart="1"
+                                data-open-cart="1"
+                                data-item-id="{{ item.id }}"
+                                data-item-name="{{ item.name }}"
+                                data-item-price="{{ item.price }}"
+                                data-item-desc="{{ item.description|default_if_none:'' }}"
+                                data-item-image="{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}"
+                                data-item-category="{{ item.category }}"
+                            >{% trans "Add to Order" %}</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- BBQ Tab -->
+        <div id="bbq" class="menu-tab-content">
+            <div class="menu-grid">
+                {% for item in main_courses|slice:"0:4" %}
+                <div class="menu-item-card ftco-animate">
+                    <div class="menu-item-image-wrapper">
+                        {% if item.image %}
+                        <div class="menu-item-image" style="background-image: url('{{ item.image.url }}');" onclick="openImageModal(event)"></div>
+                        {% else %}
+                        <div class="menu-item-image" style="background-image: url('{% static 'images/placeholder.jpg' %}'); background-color: #f5f5f5;" onclick="openImageModal(event)"></div>
+                        {% endif %}
+                        <span class="menu-item-badge">BBQ</span>
+                    </div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-header">
+                            <h3 class="menu-item-name">{{ item.name }}</h3>
+                            <span class="menu-item-price">${{ item.price }}</span>
+                        </div>
+                        <p class="menu-item-description">{{ item.description }}</p>
+                        <div class="menu-item-action">
+                            <button
+                                type="button"
+                                class="menu-item-btn"
+                                data-add-to-cart="1"
+                                data-open-cart="1"
+                                data-item-id="{{ item.id }}"
+                                data-item-name="{{ item.name }}"
+                                data-item-price="{{ item.price }}"
+                                data-item-desc="{{ item.description|default_if_none:'' }}"
+                                data-item-image="{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}"
+                                data-item-category="{{ item.category }}"
+                            >{% trans "Add to Order" %}</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Desserts Tab -->
+        <div id="desserts" class="menu-tab-content">
+            <div class="menu-grid">
+                {% for item in desserts %}
+                <div class="menu-item-card ftco-animate">
+                    <div class="menu-item-image-wrapper">
+                        {% if item.image %}
+                        <div class="menu-item-image" style="background-image: url('{{ item.image.url }}');" onclick="openImageModal(event)"></div>
+                        {% else %}
+                        <div class="menu-item-image" style="background-image: url('{% static 'images/placeholder.jpg' %}'); background-color: #f5f5f5;" onclick="openImageModal(event)"></div>
+                        {% endif %}
+                        <span class="menu-item-badge">SWEET</span>
+                    </div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-header">
+                            <h3 class="menu-item-name">{{ item.name }}</h3>
+                            <span class="menu-item-price">${{ item.price }}</span>
+                        </div>
+                        <p class="menu-item-description">{{ item.description }}</p>
+                        <div class="menu-item-action">
+                            <button
+                                type="button"
+                                class="menu-item-btn"
+                                data-add-to-cart="1"
+                                data-open-cart="1"
+                                data-item-id="{{ item.id }}"
+                                data-item-name="{{ item.name }}"
+                                data-item-price="{{ item.price }}"
+                                data-item-desc="{{ item.description|default_if_none:'' }}"
+                                data-item-image="{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}"
+                                data-item-category="{{ item.category }}"
+                            >{% trans "Add to Order" %}</button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center w-100">No desserts available</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Beverages Tab -->
+        <div id="beverages" class="menu-tab-content">
+            <div class="menu-grid">
+                {% for item in beverages %}
+                <div class="menu-item-card ftco-animate">
+                    <div class="menu-item-image-wrapper">
+                        {% if item.image %}
+                        <div class="menu-item-image" style="background-image: url('{{ item.image.url }}');" onclick="openImageModal(event)"></div>
+                        {% else %}
+                        <div class="menu-item-image" style="background-image: url('{% static 'images/placeholder.jpg' %}'); background-color: #f5f5f5;" onclick="openImageModal(event)"></div>
+                        {% endif %}
+                        <span class="menu-item-badge">DRINK</span>
+                    </div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-header">
+                            <h3 class="menu-item-name">{{ item.name }}</h3>
+                            <span class="menu-item-price">${{ item.price }}</span>
+                        </div>
+                        <p class="menu-item-description">{{ item.description }}</p>
+                        <div class="menu-item-action">
+                            <button
+                                type="button"
+                                class="menu-item-btn"
+                                data-add-to-cart="1"
+                                data-open-cart="1"
+                                data-item-id="{{ item.id }}"
+                                data-item-name="{{ item.name }}"
+                                data-item-price="{{ item.price }}"
+                                data-item-desc="{{ item.description|default_if_none:'' }}"
+                                data-item-image="{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}"
+                                data-item-category="{{ item.category }}"
+                            >{% trans "Add to Order" %}</button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center w-100">{% trans "No beverages available" %}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url('{% static 'images/bg_5.jpg' %}');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 py-5 text-center">
+                <h2 class="mb-4">{% trans "Ready for a memorable dining experience?" %}</h2>
+                <p class="mb-4" style="font-size: 18px;">Reserve your table today and enjoy our exquisite menu</p>
+                <p><a href="{% url 'restaurant:reservation' %}" class="btn btn-primary px-5 py-3 mt-3">{% trans "Book Now" %}</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_js %}
+<script>
+    // Order state
+    var currentOrder = {
+        itemName: null,
+        itemPrice: null,
+        quantity: 1,
+        orderType: 'seated'
+    };
+    
+    // Tab switching functionality
+    function showTab(evt, tabName) {
+        // Hide all tab contents
+        var tabContents = document.getElementsByClassName("menu-tab-content");
+        for (var i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.remove("active");
+        }
+        
+        // Remove active class from all buttons
+        var tabButtons = document.getElementsByClassName("menu-tab-btn");
+        for (var i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].classList.remove("active");
+        }
+        
+        // Show the selected tab and mark button as active
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+    
+    // Image modal functionality
+    function openImageModal(event) {
+        event.stopPropagation();
+        var imageUrl = window.getComputedStyle(event.target).backgroundImage;
+        imageUrl = imageUrl.replace(/url\(["']?/, '').replace(/["']?\)/, '');
+        
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("modalImage");
+        modal.classList.add("active");
+        modalImg.src = imageUrl;
+    }
+    
+    function closeImageModal() {
+        var modal = document.getElementById("imageModal");
+        if (modal) {
+            modal.classList.remove("active");
+        }
+    }
+    
+    // Close modal when clicking outside the image
+    var imageModalElement = document.getElementById("imageModal");
+    if (imageModalElement) {
+        imageModalElement.onclick = function(event) {
+            if (event.target == this) {
+                closeImageModal();
+            }
+        }
+    }
+    
+    // Handle anchor navigation from home page
+    function handleAnchorNavigation() {
+        var hash = window.location.hash.substring(1); // Remove # from hash
+        if (hash) {
+            var tabElement = document.getElementById(hash);
+            if (tabElement) {
+                // Activate the tab
+                var button = document.querySelector('button[onclick="showTab(event, \'' + hash + '\')"]');
+                if (button) {
+                    button.click();
+                }
+                
+                // Smooth scroll to the section
+                setTimeout(function() {
+                    tabElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+    }
+    
+    // Handle anchor on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        handleAnchorNavigation();
+    });
+    
+    // Handle hash change (back button, etc)
+    window.addEventListener('hashchange', function() {
+        handleAnchorNavigation();
+    });
+</script>
+
+{% endblock %}
+{% endblock %}

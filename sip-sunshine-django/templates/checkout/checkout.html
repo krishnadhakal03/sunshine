@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Checkout" %}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 100px; padding-bottom: 50px;">
+    
+    <!-- Main Checkout Container -->
+    <div style="max-width: 900px; margin: 0 auto;">
+        
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 50px;">
+            <h1 style="font-size: 36px; font-weight: 700; margin-bottom: 10px;">🛒 {% trans "Secure Checkout" %}</h1>
+            <p style="color: #666; font-size: 16px;">{% trans "Complete your order in 4 simple steps" %}</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="checkout-progress" style="display: flex; justify-content: space-between; margin-bottom: 50px; flex-wrap: wrap; gap: 15px;">
+            
+            <!-- Step 1 -->
+            <div class="checkout-step" style="flex: 1; text-align: center; min-width: 150px; opacity: 0.5;" id="step1">
+                <div style="
+                    width: 50px; 
+                    height: 50px; 
+                    background: #f34949; 
+                    color: white; 
+                    border-radius: 50%; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    font-size: 24px; 
+                    margin: 0 auto 10px;
+                    font-weight: 700;
+                ">1️⃣</div>
+                <div style="font-weight: 600; color: #1a1a1a;">{% trans "Order Type" %}</div>
+                <div style="font-size: 12px; color: #999;">{% trans "Choose pickup or delivery" %}</div>
+            </div>
+
+            <div class="checkout-progress-arrow" style="display: flex; align-items: center; color: #ccc;">→</div>
+
+            <!-- Step 2 -->
+            <div class="checkout-step" style="flex: 1; text-align: center; min-width: 150px; opacity: 0.5;" id="step2">
+                <div style="
+                    width: 50px; 
+                    height: 50px; 
+                    background: #f34949; 
+                    color: white; 
+                    border-radius: 50%; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    font-size: 24px; 
+                    margin: 0 auto 10px;
+                    font-weight: 700;
+                ">2️⃣</div>
+                <div style="font-weight: 600; color: #1a1a1a;">{% trans "Your Details" %}</div>
+                <div style="font-size: 12px; color: #999;">{% trans "Name, phone, address" %}</div>
+            </div>
+
+            <div class="checkout-progress-arrow" style="display: flex; align-items: center; color: #ccc;">→</div>
+
+            <!-- Step 3 -->
+            <div class="checkout-step" style="flex: 1; text-align: center; min-width: 150px; opacity: 0.5;" id="step3">
+                <div style="
+                    width: 50px; 
+                    height: 50px; 
+                    background: #f34949; 
+                    color: white; 
+                    border-radius: 50%; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    font-size: 24px; 
+                    margin: 0 auto 10px;
+                    font-weight: 700;
+                ">3️⃣</div>
+                <div style="font-weight: 600; color: #1a1a1a;">{% trans "Review" %}</div>
+                <div style="font-size: 12px; color: #999;">{% trans "Verify order total" %}</div>
+            </div>
+
+            <div class="checkout-progress-arrow" style="display: flex; align-items: center; color: #ccc;">→</div>
+
+            <!-- Step 4 -->
+            <div class="checkout-step" style="flex: 1; text-align: center; min-width: 150px; opacity: 0.5;" id="step4">
+                <div style="
+                    width: 50px; 
+                    height: 50px; 
+                    background: #f34949; 
+                    color: white; 
+                    border-radius: 50%; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    font-size: 24px; 
+                    margin: 0 auto 10px;
+                    font-weight: 700;
+                ">4️⃣</div>
+                <div style="font-weight: 600; color: #1a1a1a;">{% trans "Payment" %}</div>
+                <div style="font-size: 12px; color: #999;">{% trans "Choose payment method" %}</div>
+            </div>
+
+        </div>
+
+        <!-- Order Summary Card (Right Sidebar on Desktop) -->
+        <div class="row">
+            <div class="col-lg-8">
+                
+                <!-- Info Message -->
+                <div style="background: rgba(243, 73, 73, 0.05); border-left: 4px solid #f34949; padding: 15px; border-radius: 6px; margin-bottom: 30px;">
+                    <p style="margin: 0; color: #666; font-size: 14px;">
+                        <strong>💡 {% trans "Tip:" %}</strong> {% trans "All modals will pop up automatically. Complete each step to proceed." %}
+                    </p>
+                </div>
+
+                <!-- Cart Summary Box -->
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; margin-bottom: 30px;">
+                    <h5 style="margin-bottom: 20px; font-weight: 700;">📦 {% trans "Your Cart" %}</h5>
+                    <div id="checkoutCartSummary" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <div style="border-top: 2px solid #e0e0e0; padding-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px;">
+                            <span>{% trans "Subtotal:" %}</span>
+                            <span>€<span id="checkoutSubtotal">0.00</span></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #f34949;">
+                            <span>{% trans "Total:" %}</span>
+                            <span>€<span id="checkoutTotal">0.00</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Start Checkout Button -->
+                <button onclick="startCheckout()" style="
+                    width: 100%;
+                    padding: 15px;
+                    background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 25px rgba(243,73,73,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                    🚀 {% trans "Start Checkout" %}
+                </button>
+
+                <!-- Back to Menu -->
+                <button onclick="window.location.href='/menu/'" style="
+                    width: 100%;
+                    padding: 12px;
+                    background: white;
+                    color: #f34949;
+                    border: 2px solid #f34949;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-top: 10px;
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='rgba(243,73,73,0.05)';" onmouseout="this.style.background='white';">
+                    ← {% trans "Back to Menu" %}
+                </button>
+
+            </div>
+
+            <!-- Desktop Sidebar -->
+            <div class="col-lg-4" style="display: none;">
+                <!-- Payment info will go here on desktop -->
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Include modals from templates -->
+{% include "checkout/order_type_modal.html" %}
+{% include "checkout/customer_details_modal.html" %}
+{% include "checkout/order_review_modal.html" %}
+
+<!-- Toast Container -->
+<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;"></div>
+
+<script>
+    // Load cart on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCheckoutCart();
+    });
+
+    function loadCheckoutCart() {
+        const cart = JSON.parse(sessionStorage.getItem('checkout_cart') || localStorage.getItem('sip_sunshine_cart') || '[]');
+        let subtotal = 0;
+
+        if (cart.length === 0) {
+            // Redirect back to menu if no items
+            showToast('{% trans "Your cart is empty. Add items to continue." %}', 'warning');
+            setTimeout(() => {
+                window.location.href = '/menu/';
+            }, 2000);
+            return;
+        }
+
+        let html = '';
+        cart.forEach(item => {
+            const total = item.price * item.quantity;
+            subtotal += total;
+            html += `
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 6px;">
+                    <div>
+                        <div style="font-weight: 600; color: #1a1a1a;">${item.name}</div>
+                        <div style="font-size: 12px; color: #999;">x${item.quantity} @ €${item.price.toFixed(2)}</div>
+                    </div>
+                    <div style="font-weight: 600; color: #1a1a1a;">€${total.toFixed(2)}</div>
+                </div>
+            `;
+        });
+
+        document.getElementById('checkoutCartSummary').innerHTML = html;
+        document.getElementById('checkoutSubtotal').textContent = subtotal.toFixed(2);
+        document.getElementById('checkoutTotal').textContent = subtotal.toFixed(2);
+
+        // Store for later use
+        sessionStorage.setItem('checkout_subtotal', subtotal.toFixed(2));
+    }
+
+    function startCheckout() {
+        // Verify cart
+        const cart = JSON.parse(sessionStorage.getItem('checkout_cart') || localStorage.getItem('sip_sunshine_cart') || '[]');
+        if (cart.length === 0) {
+            showToast('{% trans "Your cart is empty" %}', 'error');
+            return;
+        }
+
+        // Store cart in checkout session
+        sessionStorage.setItem('checkout_cart', JSON.stringify(cart));
+
+        // Update step 1 to active
+        document.getElementById('step1').style.opacity = '1';
+
+        // Show order type modal
+        setTimeout(() => {
+            openOrderTypeModal();
+        }, 300);
+    }
+
+    // NOTE:
+    // The included modal templates define global functions like:
+    // proceedToCustomerDetails, goBackToOrderType, proceedToDeliveryDetails, etc.
+    // Do not redefine them here, or it breaks the flow by overwriting their logic.
+
+    // Toast notification system
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            background: ${type === 'error' ? '#f34949' : type === 'success' ? '#20c997' : type === 'warning' ? '#ffc107' : '#17a2b8'};
+            color: ${type === 'warning' ? '#1a1a1a' : 'white'};
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+            max-width: 300px;
+        `;
+        toast.textContent = message;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Add animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+{% endblock %}

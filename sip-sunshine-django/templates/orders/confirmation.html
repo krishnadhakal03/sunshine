@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Order Confirmation" %}{% endblock %}
+
+{% block content %}
+<div class="confirmation-page" style="min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #f0f1f3 100%); padding: 40px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                
+                <!-- Success Header -->
+                <div class="text-center mb-5">
+                    <div style="font-size: 80px; color: #28a745; margin-bottom: 20px;">✓</div>
+                    <h1 style="color: #1a1a1a; font-weight: 700; margin-bottom: 10px;">{% trans "Order Confirmed!" %}</h1>
+                    <p style="color: #666; font-size: 16px;">{% trans "Thank you for your order. We're preparing it now!" %}</p>
+                </div>
+
+                <!-- Order Details Card -->
+                <div class="card" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px; overflow: hidden;">
+                    
+                    <!-- Header -->
+                    <div style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; padding: 20px; border-bottom: 4px solid #ffc400;">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <p style="margin: 0; font-size: 12px; opacity: 0.9;">{% trans "Order Number" %}</p>
+                                <h3 style="margin: 5px 0 0 0; font-weight: 700; letter-spacing: 1px;">
+                                    #{{ order.id }}
+                                </h3>
+                            </div>
+                            <div class="col text-end">
+                                <p style="margin: 0; font-size: 12px; opacity: 0.9;">{% trans "Ordered" %}</p>
+                                <p style="margin: 5px 0 0 0; font-weight: 700;">
+                                    {{ order.created_at|date:"M d, Y H:i" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Content -->
+                    <div style="padding: 30px;">
+                        
+                        <!-- Order Type Badge -->
+                        <div style="margin-bottom: 25px;">
+                            {% if order.order_type == 'seated' %}
+                                <span class="badge" style="background: #007bff; color: white; padding: 8px 16px; font-size: 13px; border-radius: 4px; font-weight: 600;">
+                                    🪑 {% trans "Seated Order" %}
+                                </span>
+                            {% else %}
+                                <span class="badge" style="background: #28a745; color: white; padding: 8px 16px; font-size: 13px; border-radius: 4px; font-weight: 600;">
+                                    🚚 {% trans "Online Order" %}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Guest Information -->
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                            <h5 style="color: #1a1a1a; font-weight: 700; margin-bottom: 15px;">👤 {% trans "Guest Information" %}</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p style="color: #666; font-size: 12px; margin-bottom: 3px;">{% trans "Name" %}</p>
+                                    <p style="color: #1a1a1a; font-weight: 600; margin: 0;">{{ order.guest_name }}</p>
+                                </div>
+                                {% if order.guest_email %}
+                                    <div class="col-md-6">
+                                        <p style="color: #666; font-size: 12px; margin-bottom: 3px;">{% trans "Email" %}</p>
+                                        <p style="color: #1a1a1a; font-weight: 600; margin: 0;">{{ order.guest_email }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% if order.guest_phone %}
+                                <div class="row" style="margin-top: 12px;">
+                                    <div class="col-md-6">
+                                        <p style="color: #666; font-size: 12px; margin-bottom: 3px;">{% trans "Phone" %}</p>
+                                        <p style="color: #1a1a1a; font-weight: 600; margin: 0;">{{ order.guest_phone }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Order Details Based on Type -->
+                        {% if order.order_type == 'seated' %}
+                            <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #007bff;">
+                                <h5 style="color: #004085; font-weight: 700; margin-bottom: 15px;">🪑 {% trans "Table Information" %}</h5>
+                                <p style="color: #004085; margin: 0;">
+                                    {% if order.table_number %}
+                                        {% trans "Table" %} <strong>#{{ order.table_number }}</strong>
+                                    {% else %}
+                                        <em>{% trans "No table number specified" %}</em>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        {% else %}
+                            <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #28a745;">
+                                <h5 style="color: #1b5e20; font-weight: 700; margin-bottom: 15px;">📍 {% trans "Delivery Address" %}</h5>
+                                <div style="color: #1b5e20; line-height: 1.8;">
+                                    <p style="margin: 0;">{{ order.delivery_address }}</p>
+                                    <p style="margin: 0;">{{ order.delivery_postal_code }} {{ order.delivery_city }}</p>
+                                    <p style="margin: 0;">{{ order.delivery_country }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Order Items -->
+                        <div style="margin-bottom: 25px;">
+                            <h5 style="color: #1a1a1a; font-weight: 700; margin-bottom: 15px;">📋 {% trans "Order Items" %}</h5>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                {% for item in order_items %}
+                                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                                        <td style="padding: 12px 0; color: #1a1a1a;">
+                                            <strong>{{ item.item_name }}</strong>
+                                            {% if item.special_instructions %}
+                                                <br><small style="color: #666;">{{ item.special_instructions }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td style="padding: 12px 0; text-align: center; color: #666;">
+                                            x{{ item.quantity }}
+                                        </td>
+                                        <td style="padding: 12px 0; text-align: right;">
+                                            <strong style="color: #f34949;">€{{ item.get_subtotal }}</strong>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+
+                        <!-- Special Requests -->
+                        {% if order.special_requests %}
+                            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #ff9800;">
+                                <h6 style="color: #856404; font-weight: 700; margin-bottom: 8px;">📝 {% trans "Special Instructions" %}</h6>
+                                <p style="color: #856404; margin: 0; font-size: 13px;">{{ order.special_requests }}</p>
+                            </div>
+                        {% endif %}
+
+                        <!-- Order Summary -->
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-top: 2px solid #e0e0e0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #1a1a1a; font-weight: 700; font-size: 18px;">{% trans "Total" %}</span>
+                                <span style="color: #f34949; font-weight: 700; font-size: 24px;">€{{ order.total_price }}</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Status Card -->
+                <div class="card" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px; overflow: hidden;">
+                    <div style="padding: 30px;">
+                        <h5 style="color: #1a1a1a; font-weight: 700; margin-bottom: 20px;">📊 {% trans "Order Status" %}</h5>
+                        
+                        <!-- Status Timeline -->
+                        <div style="position: relative;">
+                            {% with statuses="pending|confirmed|preparing|ready|completed" %}
+                                {% for status in statuses|add:"" %}
+                                    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                                        <div style="
+                                            width: 40px;
+                                            height: 40px;
+                                            border-radius: 50%;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            margin-right: 15px;
+                                            font-weight: 700;
+                                            {% if order.status == status or forloop.counter <= current_status %}
+                                                background: #28a745;
+                                                color: white;
+                                            {% else %}
+                                                background: #e0e0e0;
+                                                color: #999;
+                                            {% endif %}
+                                        ">
+                                            {% if forloop.counter <= current_status %}✓{% else %}{{ forloop.counter }}{% endif %}
+                                        </div>
+                                        <div>
+                                            <p style="margin: 0; color: #1a1a1a; font-weight: 600;">
+                                                {% if status == 'pending' %}
+                                                    {% trans "Pending" %}
+                                                {% elif status == 'confirmed' %}
+                                                    {% trans "Confirmed" %}
+                                                {% elif status == 'preparing' %}
+                                                    {% trans "Preparing" %}
+                                                {% elif status == 'ready' %}
+                                                    {% trans "Ready" %}
+                                                {% elif status == 'completed' %}
+                                                    {% trans "Completed" %}
+                                                {% endif %}
+                                            </p>
+                                            <p style="margin: 2px 0 0 0; color: #999; font-size: 12px;">
+                                                {% if order.status == status %}
+                                                    {% trans "Current status" %}
+                                                {% else %}
+                                                    {% trans "Coming soon..." %}
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="row gap-3" style="margin-bottom: 30px;">
+                    <div class="col-md-6">
+                        <a href="{% url 'restaurant:order_tracking' %}?order_id={{ order.id }}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; text-decoration: none;">
+                            📍 {% trans "Track Order" %}
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'restaurant:menu' %}" class="btn btn-outline-primary w-100" style="color: #f34949; border: 2px solid #f34949; padding: 12px; border-radius: 6px; font-weight: 600; text-decoration: none;">
+                            🍽️ {% trans "Order More" %}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Information Box -->
+                <div class="alert alert-info" role="alert" style="border-radius: 8px; background: #e7f3ff; border: 1px solid #b3d9ff; color: #004085; padding: 20px;">
+                    <h6 style="font-weight: 700; margin-bottom: 10px;">ℹ️ {% trans "What's Next?" %}</h6>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        {% if order.order_type == 'online' %}
+                            <li>{% trans "A confirmation email will be sent to " %}<strong>{{ order.guest_email }}</strong></li>
+                            <li>{% trans "Your order will be prepared and ready for delivery" %}</li>
+                            <li>{% trans "We'll notify you when your order is on the way" %}</li>
+                        {% else %}
+                            <li>{% trans "Your order has been sent to the kitchen" %}</li>
+                            <li>{% trans "Your meal will be prepared and served to table #" %}<strong>{{ order.table_number|default:"TBD" }}</strong></li>
+                            <li>{% trans "Please be patient while we prepare your delicious meal" %}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .badge {
+        display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            margin-bottom: 20px !important;
+        }
+        
+        .row.gap-3 > div {
+            margin-bottom: 10px;
+        }
+    }
+</style>
+{% endblock %}

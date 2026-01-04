@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+    <!-- Background circle -->
+    <circle cx="150" cy="150" r="145" fill="#ffffff" stroke="#f34949" stroke-width="3"/>
+    
+    <!-- Sun rays -->
+    <g stroke="#f34949" stroke-width="3" stroke-linecap="round">
+        <line x1="150" y1="20" x2="150" y2="45"/>
+        <line x1="150" y1="255" x2="150" y2="280"/>
+        <line x1="20" y1="150" x2="45" y2="150"/>
+        <line x1="255" y1="150" x2="280" y2="150"/>
+        <line x1="45" y1="45" x2="65" y2="65"/>
+        <line x1="235" y1="235" x2="255" y2="255"/>
+        <line x1="255" y1="45" x2="235" y2="65"/>
+        <line x1="65" y1="235" x2="45" y2="255"/>
+    </g>
+    
+    <!-- Sun circle -->
+    <circle cx="150" cy="90" r="35" fill="#f34949"/>
+    
+    <!-- Beer glass (right side) -->
+    <g stroke="#1a1a1a" stroke-width="2" fill="none">
+        <!-- Glass -->
+        <path d="M 110 140 L 105 210 Q 105 220 115 220 L 135 220 Q 145 220 145 210 L 140 140 Z" fill="#fff4e6" stroke="#d4af37"/>
+        <!-- Beer inside -->
+        <ellipse cx="122.5" cy="145" rx="17.5" ry="4" fill="#d4a030" opacity="0.7"/>
+        <path d="M 105 150 Q 105 160 122.5 165 Q 140 160 140 150" fill="#d4a030" opacity="0.5"/>
+        <!-- Foam -->
+        <ellipse cx="122.5" cy="140" rx="22" ry="8" fill="#f5deb3" opacity="0.8"/>
+        <!-- Handle -->
+        <path d="M 145 160 Q 160 160 160 180 Q 160 200 145 200" stroke="#d4af37" stroke-width="3" fill="none"/>
+    </g>
+    
+    <!-- Grilled meat/BBQ (left side) -->
+    <g stroke="#1a1a1a" stroke-width="2">
+        <!-- Grill marks -->
+        <line x1="185" y1="145" x2="195" y2="145" stroke="#8b4513" stroke-width="3"/>
+        <line x1="185" y1="155" x2="195" y2="155" stroke="#8b4513" stroke-width="3"/>
+        <line x1="185" y1="165" x2="195" y2="165" stroke="#8b4513" stroke-width="3"/>
+        <line x1="185" y1="175" x2="195" y2="175" stroke="#8b4513" stroke-width="3"/>
+        <!-- Meat outline -->
+        <path d="M 185 140 L 198 145 L 195 180 L 178 175 Z" fill="#c84b31" stroke="#8b4513" stroke-width="2"/>
+        <!-- Highlight -->
+        <ellipse cx="188" cy="155" rx="4" ry="8" fill="#e07040" opacity="0.6"/>
+    </g>
+    
+    <!-- Text -->
+    <text x="150" y="245" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a1a1a" text-anchor="middle">
+        Sip and Sunshine
+    </text>
+    <text x="150" y="265" font-family="Arial, sans-serif" font-size="12" fill="#f34949" text-anchor="middle" letter-spacing="1">
+        BREAKFAST • BBQ • DRINKS
+    </text>
+</svg>

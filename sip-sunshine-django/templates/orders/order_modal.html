@@ -1,0 +1,361 @@
+{% load i18n %}
+{# Order Creation Modal #}
+<div id="orderModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            
+            <!-- Modal Header -->
+            <div class="modal-header" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 12px 12px 0 0; padding: 20px;">
+                <h5 class="modal-title" style="font-weight: 700; letter-spacing: 0.5px;">
+                    📦 {% trans "Create Your Order" %}
+                </h5>
+                <button type="button" class="btn-close" onclick="closeOrderModal()" style="background: rgba(255,255,255,0.5); border: none; padding: 8px; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; font-size: 20px; color: white; display: flex; align-items: center; justify-content: center;" title="Close">
+                    ×
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 30px;">
+                
+                <!-- Item Details (Auto-populated) -->
+                <div class="item-details" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #ffc400;">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img id="modalItemImage" src="" alt="Item" style="width: 100%; height: 150px; object-fit: cover; border-radius: 6px; display: none;">
+                        </div>
+                        <div class="col-md-9">
+                            <h5 id="modalItemName" style="color: #1a1a1a; font-weight: 700; margin-bottom: 5px;">-</h5>
+                            <p id="modalItemDesc" style="color: #666; font-size: 13px; margin: 0; line-height: 1.5;">-</p>
+                            <div style="margin-top: 10px;">
+                                <span style="color: #f34949; font-size: 20px; font-weight: 700;">
+                                    €<span id="modalItemPrice">0</span>
+                                </span>
+                                <span style="color: #666; font-size: 12px; margin-left: 10px; background: #e9ecef; padding: 4px 8px; border-radius: 4px;">
+                                    {% trans "per item" %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Type Toggle -->
+                <div class="order-type-toggle" style="margin-bottom: 25px;">
+                    <label style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 12px;">
+                        {% trans "How would you like to order?" %} <span style="color: #f34949;">*</span>
+                    </label>
+                    <div class="btn-group w-100" role="group" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                        <input type="radio" class="btn-check" name="order_type" id="orderSeated" value="seated" checked>
+                        <label class="btn btn-outline-primary" for="orderSeated" style="border: 2px solid #f34949; color: #f34949; font-weight: 600; flex: 1; min-width: 120px;">
+                            🪑 {% trans "Seated" %}
+                        </label>
+
+                        <input type="radio" class="btn-check" name="order_type" id="orderPickup" value="pickup">
+                        <label class="btn btn-outline-primary" for="orderPickup" style="border: 2px solid #f34949; color: #f34949; font-weight: 600; flex: 1; min-width: 120px;">
+                            🎁 {% trans "Pickup" %}
+                        </label>
+
+                        <input type="radio" class="btn-check" name="order_type" id="orderDelivery" value="delivery">
+                        <label class="btn btn-outline-primary" for="orderDelivery" style="border: 2px solid #f34949; color: #f34949; font-weight: 600; flex: 1; min-width: 120px;">
+                            🚚 {% trans "Delivery" %}
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Form Fields -->
+                <form id="orderForm" style="display: flex; flex-direction: column; gap: 15px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="item_name" id="itemName">
+                    <input type="hidden" name="item_price" id="itemPrice">
+                    <input type="hidden" name="order_type" id="orderTypeInput" value="seated">
+
+                    <!-- Guest Name (Always Required) -->
+                    <div class="form-group">
+                        <label for="guestName" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                            {% trans "Your Name" %} <span style="color: #f34949;">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="guestName" 
+                            name="guest_name" 
+                            placeholder="{% trans 'Enter your name' %}"
+                            required
+                            style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                        >
+                    </div>
+
+                    <!-- Guest Phone (Always Required) -->
+                    <div class="form-group">
+                        <label for="guestPhone" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                            {% trans "Phone Number" %} <span style="color: #f34949;">*</span>
+                        </label>
+                        <input 
+                            type="tel" 
+                            class="form-control" 
+                            id="guestPhone" 
+                            name="guest_phone" 
+                            placeholder="{% trans 'e.g., +31612345678' %}"
+                            required
+                            style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                        >
+                    </div>
+
+                    <!-- SEATED CUSTOMER FIELDS -->
+                    <div id="seatedFields" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div class="form-group">
+                            <label for="tableNumber" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "Table Number" %} <span style="color: #f34949;">*</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                class="form-control" 
+                                id="tableNumber" 
+                                name="table_number" 
+                                placeholder="{% trans 'e.g., 5' %}"
+                                min="1"
+                                max="50"
+                                required
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- PICKUP CUSTOMER FIELDS -->
+                    <div id="pickupFields" style="display: none; flex-direction: column; gap: 15px;">
+                        <div class="form-group">
+                            <label for="preferredPickupTime" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "Preferred Pickup Time" %} <span style="color: #999; font-weight: 400;">({% trans "optional" %})</span>
+                            </label>
+                            <input 
+                                type="datetime-local" 
+                                class="form-control" 
+                                id="preferredPickupTime" 
+                                name="preferred_pickup_time" 
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- DELIVERY CUSTOMER FIELDS -->
+                    <div id="deliveryFields" style="display: none; flex-direction: column; gap: 15px;">
+                        
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="guestEmail" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "Email Address" %} <span style="color: #f34949;">*</span>
+                            </label>
+                            <input 
+                                type="email" 
+                                class="form-control" 
+                                id="guestEmail" 
+                                name="guest_email" 
+                                placeholder="you@example.com"
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+
+                        <!-- Delivery Address -->
+                        <div class="form-group">
+                            <label for="deliveryAddress" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "Street Address" %} <span style="color: #f34949;">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="deliveryAddress" 
+                                name="delivery_address" 
+                                placeholder="{% trans 'Street and house number' %}"
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+
+                        <!-- City -->
+                        <div class="form-group">
+                            <label for="deliveryCity" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "City" %} <span style="color: #f34949;">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="deliveryCity" 
+                                name="delivery_city" 
+                                placeholder="{% trans 'e.g., Amsterdam' %}"
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+
+                        <!-- Postal Code -->
+                        <div class="form-group">
+                            <label for="deliveryPostalCode" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "Postal Code" %} <span style="color: #f34949;">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="deliveryPostalCode" 
+                                name="delivery_postal_code" 
+                                placeholder="{% trans 'e.g., 1012 AB' %}"
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+
+                        <!-- Country -->
+                        <div class="form-group">
+                            <label for="deliveryCountry" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "Country" %} <span style="color: #f34949;">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="deliveryCountry" 
+                                name="delivery_country" 
+                                placeholder="{% trans 'e.g., Netherlands' %}"
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            <label for="deliveryCountry" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "Country" %} <span style="color: #f34949;">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="deliveryCountry" 
+                                name="delivery_country" 
+                                placeholder="{% trans 'e.g., Netherlands' %}"
+                                value="Netherlands"
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Quantity Selector -->
+                    <div class="form-group">
+                        <label for="quantity" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                            {% trans "Quantity" %} <span style="color: #f34949;">*</span>
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button type="button" class="btn btn-outline-secondary qty-btn-minus" style="width: 40px; height: 40px; padding: 0; border-radius: 6px;">-</button>
+                            <input 
+                                type="number" 
+                                class="form-control text-center" 
+                                id="quantity" 
+                                name="quantity" 
+                                value="1"
+                                min="1"
+                                max="99"
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; font-weight: 600; transition: all 0.3s ease;"
+                            >
+                            <button type="button" class="btn btn-outline-secondary qty-btn-plus" style="width: 40px; height: 40px; padding: 0; border-radius: 6px;">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Special Instructions -->
+                    <div class="form-group">
+                        <label for="specialInstructions" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                            {% trans "Special Instructions" %}
+                            <span style="font-size: 12px; color: #666;">({% trans "Allergies, preferences, etc." %})</span>
+                        </label>
+                        <textarea 
+                            class="form-control" 
+                            id="specialInstructions" 
+                            name="special_instructions" 
+                            rows="3"
+                            placeholder="{% trans 'e.g., No onions, extra spicy, arrive at 7 PM...' %}"
+                            style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; resize: vertical; transition: all 0.3s ease;"
+                        ></textarea>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: #666;">{% trans "Unit Price:" %}</span>
+                            <span style="color: #1a1a1a; font-weight: 600;">€<span id="summaryUnitPrice">0</span></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: #666;">{% trans "Quantity:" %}</span>
+                            <span style="color: #1a1a1a; font-weight: 600;"><span id="summaryQty">1</span></span>
+                        </div>
+                        <div style="border-top: 1px solid #dee2e6; padding-top: 8px; display: flex; justify-content: space-between;">
+                            <span style="color: #1a1a1a; font-weight: 700; font-size: 16px;">{% trans "Total:" %}</span>
+                            <span style="color: #f34949; font-weight: 700; font-size: 18px;">€<span id="summaryTotal">0</span></span>
+                        </div>
+                    </div>
+
+                </form>
+
+                <!-- Error Message -->
+                <div id="orderError" class="alert alert-danger" role="alert" style="display: none; margin-top: 15px; border-radius: 6px;"></div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="border-top: 1px solid #e0e0e0; padding: 20px; background: #f8f9fa;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeOrderModal()" style="border-radius: 6px;">
+                    {% trans "Cancel" %}
+                </button>
+                <button type="button" id="createOrderBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 6px; font-weight: 600; padding: 10px 30px;">
+                    {% trans "Create Order" %} 📤
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmationModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            
+            <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; border-radius: 12px 12px 0 0; padding: 20px;">
+                <h5 class="modal-title" style="font-weight: 700;">✓ {% trans "Order Confirmed!" %}</h5>
+            </div>
+
+            <div class="modal-body text-center" style="padding: 40px;">
+                <div style="font-size: 60px; margin-bottom: 20px;">✓</div>
+                <h4 style="color: #1a1a1a; font-weight: 700; margin-bottom: 10px;">{% trans "Your order has been created" %}</h4>
+                <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                    {% trans "Order ID:" %} <strong>#<span id="confirmOrderId"></span></strong>
+                </p>
+                <p style="color: #666; font-size: 13px; line-height: 1.6;">
+                    {% trans "Check your email for confirmation details.<br>You can track your order status anytime." %}
+                </p>
+            </div>
+
+            <div class="modal-footer" style="border-top: 1px solid #e0e0e0; padding: 20px; background: #f8f9fa;">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="closeConfirmationModal()" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 6px; font-weight: 600; padding: 10px 30px;">
+                    {% trans "Done" %}
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #f34949 !important;
+        box-shadow: 0 0 0 4px rgba(243, 73, 73, 0.1) !important;
+        background: #fafafa;
+    }
+
+    .btn-check:checked + .btn-outline-primary {
+        background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%) !important;
+        color: white !important;
+        border-color: #f34949 !important;
+    }
+
+    @media (max-width: 576px) {
+        .modal-dialog {
+            margin: 10px !important;
+        }
+        
+        .modal-body {
+            padding: 20px !important;
+        }
+    }
+</style>

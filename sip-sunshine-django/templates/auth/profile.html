@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "My Profile" %}{% endblock %}
+
+{% block content %}
+<div class="profile-page" style="min-height: 100vh; background: #f5f7fa; padding: 40px 0;">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="card" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden;">
+                    <div style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; padding: 20px; text-align: center;">
+                        <div style="font-size: 50px; margin-bottom: 10px;">👤</div>
+                        <h4 style="margin: 0; font-weight: 700;">{{ user.first_name }}</h4>
+                        <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.9;">{{ user.email }}</p>
+                    </div>
+                    <div style="padding: 20px;">
+                        <p style="color: #666; font-size: 12px; margin-bottom: 15px;">{% trans "Valued Customer" %}</p>
+                        <a href="{% url 'restaurant:customer_logout' %}" class="btn btn-outline-danger w-100" style="border-radius: 6px; font-weight: 600;">
+                            {% trans "Sign Out" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+
+                {% if current_order %}
+                <div class="card" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px; overflow: hidden;">
+                    <div style="background: #f8f9fa; padding: 20px; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center;">
+                        <h5 style="margin: 0; color: #1a1a1a; font-weight: 700;">📍 {% trans "Current Order" %}</h5>
+                        <a href="{% url 'restaurant:order_tracking' %}?order_id={{ current_order.id }}" class="btn btn-primary" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 6px; font-weight: 600; text-decoration: none; padding: 10px 16px;">
+                            {% trans "Track" %}
+                        </a>
+                    </div>
+
+                    <div style="padding: 24px 30px;">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <div style="color: #666; font-size: 12px; font-weight: 700;">{% trans "Order" %}</div>
+                                <div style="font-weight: 700; color: #1a1a1a;">{{ current_order.order_number }}</div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div style="color: #666; font-size: 12px; font-weight: 700;">{% trans "Status" %}</div>
+                                <div style="font-weight: 700; color: #1a1a1a; text-transform: capitalize;">{{ current_order.status }}</div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div style="color: #666; font-size: 12px; font-weight: 700;">{% trans "Type" %}</div>
+                                <div style="font-weight: 700; color: #1a1a1a;">{{ current_order.get_order_type_display }}</div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div style="color: #666; font-size: 12px; font-weight: 700;">{% trans "Estimated" %}</div>
+                                <div style="font-weight: 700; color: #1a1a1a;">{% if current_order_estimated_time %}{{ current_order_estimated_time }}{% else %}{% trans "Soon" %}{% endif %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="card" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px; overflow: hidden;">
+                    
+                    <div style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; padding: 20px; border-bottom: 4px solid #ffc400;">
+                        <h3 style="margin: 0; font-weight: 700;">📋 {% trans "Your Orders" %}</h3>
+                    </div>
+
+                    <div style="padding: 30px;">
+                        {% if orders %}
+                            <div class="table-responsive">
+                                <table class="table" style="border-collapse: collapse; margin: 0;">
+                                    <thead>
+                                        <tr style="border-bottom: 2px solid #f34949;">
+                                            <th style="padding: 12px 0; color: #1a1a1a; font-weight: 700;">{% trans "Order ID" %}</th>
+                                            <th style="padding: 12px 0; color: #1a1a1a; font-weight: 700;">{% trans "Type" %}</th>
+                                            <th style="padding: 12px 0; color: #1a1a1a; font-weight: 700;">{% trans "Total" %}</th>
+                                            <th style="padding: 12px 0; color: #1a1a1a; font-weight: 700;">{% trans "Status" %}</th>
+                                            <th style="padding: 12px 0; color: #1a1a1a; font-weight: 700;">{% trans "Date" %}</th>
+                                            <th style="padding: 12px 0; color: #1a1a1a; font-weight: 700;">{% trans "Action" %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in orders %}
+                                            <tr style="border-bottom: 1px solid #e0e0e0;">
+                                                <td style="padding: 15px 0;"><strong>#{{ order.id }}</strong></td>
+                                                <td style="padding: 15px 0;">
+                                                    {% if order.order_type == 'seated' %}
+                                                        🪑 {% trans "Seated" %}
+                                                    {% else %}
+                                                        🚚 {% trans "Online" %}
+                                                    {% endif %}
+                                                </td>
+                                                <td style="padding: 15px 0; color: #f34949; font-weight: 700;">€{{ order.total_price }}</td>
+                                                <td style="padding: 15px 0;">
+                                                    {% if order.status == 'pending' %}
+                                                        <span style="background: #ffc107; color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">⏳</span>
+                                                    {% elif order.status == 'confirmed' %}
+                                                        <span style="background: #17a2b8; color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">✓</span>
+                                                    {% elif order.status == 'preparing' %}
+                                                        <span style="background: #007bff; color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">👨‍🍳</span>
+                                                    {% elif order.status == 'ready' %}
+                                                        <span style="background: #20c997; color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">🎉</span>
+                                                    {% elif order.status == 'completed' %}
+                                                        <span style="background: #28a745; color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">✓</span>
+                                                    {% elif order.status == 'cancelled' %}
+                                                        <span style="background: #dc3545; color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">✗</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td style="padding: 15px 0; color: #666; font-size: 12px;">{{ order.created_at|date:"M d, Y" }}</td>
+                                                <td style="padding: 15px 0;">
+                                                    <a href="{% url 'restaurant:order_tracking' %}?order_id={{ order.id }}" style="color: #f34949; text-decoration: none; font-weight: 600; font-size: 12px;">
+                                                        {% trans "Track" %}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div style="text-align: center; padding: 40px;">
+                                <div style="font-size: 60px; margin-bottom: 15px;">🍽️</div>
+                                <h4 style="color: #1a1a1a; font-weight: 700; margin-bottom: 10px;">{% trans "No Orders Yet" %}</h4>
+                                <p style="color: #666; margin-bottom: 20px;">{% trans "Start ordering delicious food from Sip and Sunshine!" %}</p>
+                                <a href="{% url 'restaurant:menu' %}" class="btn btn-primary" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; padding: 10px 30px; border-radius: 6px; font-weight: 600; text-decoration: none;">
+                                    {% trans "Order Now" %}
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <!-- Account Information Card -->
+                <div class="card" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden;">
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-bottom: 1px solid #e0e0e0;">
+                        <h5 style="margin: 0; color: #1a1a1a; font-weight: 700;">👤 {% trans "Account Information" %}</h5>
+                    </div>
+
+                    <div style="padding: 30px;">
+                        <form method="post" action="" class="mb-4">
+                            {% csrf_token %}
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label style="color: #666; font-size: 12px; margin-bottom: 6px; font-weight: 700; display: block;">{% trans "Full Name" %}</label>
+                                    <input name="first_name" value="{{ user.first_name }}" class="form-control" style="border-radius: 6px;" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label style="color: #666; font-size: 12px; margin-bottom: 6px; font-weight: 700; display: block;">{% trans "Email Address" %}</label>
+                                    <input value="{{ user.email }}" class="form-control" style="border-radius: 6px;" disabled />
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-md-6">
+                                    <label style="color: #666; font-size: 12px; margin-bottom: 6px; font-weight: 700; display: block;">{% trans "Phone" %}</label>
+                                    <input name="phone" value="{{ profile.phone|default:'' }}" class="form-control" style="border-radius: 6px;" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label style="color: #666; font-size: 12px; margin-bottom: 6px; font-weight: 700; display: block;">{% trans "Preferred Payment Method" %}</label>
+                                    <select name="preferred_payment_method" class="form-control" style="border-radius: 6px;">
+                                        <option value="cash" {% if profile.preferred_payment_method == 'cash' %}selected{% endif %}>{% trans "Cash" %}</option>
+                                        <option value="stripe" {% if profile.preferred_payment_method == 'stripe' %}selected{% endif %}>{% trans "Credit/Debit Card (Stripe)" %}</option>
+                                        <option value="paypal" {% if profile.preferred_payment_method == 'paypal' %}selected{% endif %}>{% trans "PayPal" %}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                                <h6 style="margin: 0 0 12px 0; font-weight: 700;">📍 {% trans "Default Delivery Address" %}</h6>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label style="color: #666; font-size: 12px; margin-bottom: 6px; font-weight: 700; display: block;">{% trans "Street Address" %}</label>
+                                        <input name="delivery_address" value="{{ profile.delivery_address|default:'' }}" class="form-control" style="border-radius: 6px;" />
+                                    </div>
+                                </div>
+
+                                <div class="row" style="margin-top: 15px;">
+                                    <div class="col-md-6">
+                                        <label style="color: #666; font-size: 12px; margin-bottom: 6px; font-weight: 700; display: block;">{% trans "City" %}</label>
+                                        <input name="delivery_city" value="{{ profile.delivery_city|default:'' }}" class="form-control" style="border-radius: 6px;" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label style="color: #666; font-size: 12px; margin-bottom: 6px; font-weight: 700; display: block;">{% trans "Postal Code" %}</label>
+                                        <input name="delivery_postal_code" value="{{ profile.delivery_postal_code|default:'' }}" class="form-control" style="border-radius: 6px;" />
+                                    </div>
+                                </div>
+
+                                <div class="row" style="margin-top: 15px;">
+                                    <div class="col-md-6">
+                                        <label style="color: #666; font-size: 12px; margin-bottom: 6px; font-weight: 700; display: block;">{% trans "Country" %}</label>
+                                        <input name="delivery_country" value="{{ profile.delivery_country|default:'' }}" class="form-control" style="border-radius: 6px;" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 6px; font-weight: 600; padding: 10px 22px;">
+                                    {% trans "Save Changes" %}
+                                </button>
+                            </div>
+                        </form>
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="col-md-6">
+                                <p style="color: #666; font-size: 12px; margin-bottom: 3px;">{% trans "Member Since" %}</p>
+                                <p style="color: #1a1a1a; font-weight: 600; margin: 0;">{{ user.date_joined|date:"M d, Y" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="color: #666; font-size: 12px; margin-bottom: 3px;">{% trans "Status" %}</p>
+                                <p style="color: #28a745; font-weight: 600; margin: 0;">✓ {% trans "Verified" %}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

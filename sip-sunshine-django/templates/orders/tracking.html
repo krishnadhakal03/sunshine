@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Track Your Order" %}{% endblock %}
+
+{% block content %}
+<div class="tracking-page" style="min-height: 100vh; background: linear-gradient(135deg, #f5f7fa 0%, #f0f1f3 100%); padding: 40px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 style="color: #1a1a1a; font-weight: 700; margin-bottom: 10px;">📍 {% trans "Track Your Order" %}</h1>
+                    <p style="color: #666; font-size: 16px;">{% trans "Check the real-time status of your order below" %}</p>
+                </div>
+
+                {% if order %}
+                    <!-- Order Found -->
+                    <div class="card" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px; overflow: hidden;">
+                        
+                        <!-- Header -->
+                        <div style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; padding: 25px; border-bottom: 4px solid #ffc400;">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <p style="margin: 0; font-size: 12px; opacity: 0.9; text-transform: uppercase;">{% trans "Order Number" %}</p>
+                                    <h2 style="margin: 5px 0 0 0; font-weight: 700; letter-spacing: 1px;">
+                                        #{{ order.id }}
+                                    </h2>
+                                </div>
+                                <div class="col text-end">
+                                    <p style="margin: 0; font-size: 12px; opacity: 0.9;">{% trans "Status" %}</p>
+                                    <h4 style="margin: 5px 0 0 0;">{{ order.get_status_display }}</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div style="padding: 30px;">
+
+                            <!-- Guest Information -->
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                                <h5 style="color: #1a1a1a; font-weight: 700; margin-bottom: 15px;">👤 {% trans "Order Details" %}</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p style="color: #666; font-size: 12px; margin-bottom: 3px;">{% trans "Guest Name" %}</p>
+                                        <p style="color: #1a1a1a; font-weight: 600; margin: 0;">{{ order.guest_name }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p style="color: #666; font-size: 12px; margin-bottom: 3px;">{% trans "Order Type" %}</p>
+                                        <p style="color: #1a1a1a; font-weight: 600; margin: 0;">
+                                            {% if order.order_type == 'seated' %}
+                                                🪑 {% trans "Seated Order" %}
+                                            {% else %}
+                                                🚚 {% trans "Online Order" %}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Timeline -->
+                            <div style="margin-bottom: 30px;">
+                                <h5 style="color: #1a1a1a; font-weight: 700; margin-bottom: 20px;">📊 {% trans "Order Progress" %}</h5>
+                                
+                                <div style="position: relative;">
+                                    {% with statuses="pending,confirmed,preparing,ready,completed" %}
+                                        {% for status in "pending,confirmed,preparing,ready,completed"|split:"," %}
+                                            {% if forloop.counter == 1 %}{% set current_step = 1 %}{% endif %}
+                                            {% if order.status == status %}{% set current_step = forloop.counter %}{% endif %}
+                                            {% if order.status == 'cancelled' %}{% set is_cancelled = True %}{% endif %}
+
+                                            <div style="display: flex; align-items: center; margin-bottom: 25px; position: relative;">
+                                                
+                                                <!-- Connecting Line -->
+                                                {% if not forloop.last %}
+                                                    <div style="
+                                                        position: absolute;
+                                                        left: 20px;
+                                                        top: 40px;
+                                                        width: 2px;
+                                                        height: 40px;
+                                                        {% if forloop.counter < current_step %}
+                                                            background: #28a745;
+                                                        {% else %}
+                                                            background: #e0e0e0;
+                                                        {% endif %}
+                                                    "></div>
+                                                {% endif %}
+
+                                                <!-- Status Circle -->
+                                                <div style="
+                                                    width: 50px;
+                                                    height: 50px;
+                                                    border-radius: 50%;
+                                                    display: flex;
+                                                    align-items: center;
+                                                    justify-content: center;
+                                                    margin-right: 20px;
+                                                    font-weight: 700;
+                                                    font-size: 18px;
+                                                    flex-shrink: 0;
+                                                    position: relative;
+                                                    z-index: 1;
+                                                    {% if forloop.counter < current_step %}
+                                                        background: #28a745;
+                                                        color: white;
+                                                        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+                                                    {% elif order.status == status %}
+                                                        background: #f34949;
+                                                        color: white;
+                                                        box-shadow: 0 4px 12px rgba(243, 73, 73, 0.3);
+                                                        animation: pulse 2s infinite;
+                                                    {% else %}
+                                                        background: #e0e0e0;
+                                                        color: #999;
+                                                    {% endif %}
+                                                ">
+                                                    {% if forloop.counter < current_step %}✓{% else %}{{ forloop.counter }}{% endif %}
+                                                </div>
+
+                                                <!-- Status Info -->
+                                                <div style="flex: 1;">
+                                                    <p style="
+                                                        margin: 0;
+                                                        color: #1a1a1a;
+                                                        font-weight: 700;
+                                                        font-size: 16px;
+                                                    ">
+                                                        {% if status == 'pending' %}
+                                                            {% trans "Pending" %}
+                                                        {% elif status == 'confirmed' %}
+                                                            {% trans "Confirmed by Kitchen" %}
+                                                        {% elif status == 'preparing' %}
+                                                            {% trans "Being Prepared" %}
+                                                        {% elif status == 'ready' %}
+                                                            {% trans "Ready for" %} {% if order.order_type == 'seated' %}{% trans "Pickup" %}{% else %}{% trans "Delivery" %}{% endif %}
+                                                        {% elif status == 'completed' %}
+                                                            {% trans "Completed" %}
+                                                        {% endif %}
+                                                    </p>
+                                                    <p style="
+                                                        margin: 5px 0 0 0;
+                                                        color: #999;
+                                                        font-size: 12px;
+                                                    ">
+                                                        {% if order.status == status %}
+                                                            ⏱️ {% trans "Current Status" %}
+                                                        {% elif forloop.counter < current_step %}
+                                                            ✓ {% trans "Completed" %}
+                                                        {% else %}
+                                                            ⏳ {% trans "Pending" %}
+                                                        {% endif %}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endwith %}
+
+                                    {% if order.status == 'cancelled' %}
+                                        <div style="
+                                            background: #ffebee;
+                                            border: 2px solid #dc3545;
+                                            border-radius: 8px;
+                                            padding: 20px;
+                                            text-align: center;
+                                            margin-top: 20px;
+                                        ">
+                                            <p style="color: #dc3545; font-weight: 700; margin: 0;">
+                                                ❌ {% trans "This order has been cancelled" %}
+                                            </p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Order Items -->
+                            {% if order_items %}
+                                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                                    <h5 style="color: #1a1a1a; font-weight: 700; margin-bottom: 15px;">📦 {% trans "Items Ordered" %}</h5>
+                                    
+                                    {% for item in order_items %}
+                                        <div style="padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <div>
+                                                    <p style="margin: 0; color: #1a1a1a; font-weight: 600;">
+                                                        {{ item.item_name }} <span style="color: #999;">x{{ item.quantity }}</span>
+                                                    </p>
+                                                    {% if item.special_instructions %}
+                                                        <p style="margin: 3px 0 0 0; color: #666; font-size: 12px;">
+                                                            {{ item.special_instructions }}
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
+                                                <p style="margin: 0; color: #f34949; font-weight: 700;">
+                                                    €{{ item.get_subtotal }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+
+                                    <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="color: #1a1a1a; font-weight: 700; font-size: 16px;">{% trans "Total" %}</span>
+                                        <span style="color: #f34949; font-weight: 700; font-size: 18px;">€{{ order.total_price }}</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Delivery/Table Info -->
+                            {% if order.order_type == 'seated' and order.table_number %}
+                                <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff;">
+                                    <p style="color: #004085; margin: 0;">
+                                        🪑 {% trans "Your order will be served to" %} <strong>{% trans "Table" %} #{{ order.table_number }}</strong>
+                                    </p>
+                                </div>
+                            {% elif order.order_type == 'online' %}
+                                <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745;">
+                                    <h6 style="color: #1b5e20; font-weight: 700; margin-bottom: 10px;">🚚 {% trans "Delivery Address" %}</h6>
+                                    <p style="color: #1b5e20; margin: 0; line-height: 1.6;">
+                                        {{ order.delivery_address }}<br>
+                                        {{ order.delivery_postal_code }} {{ order.delivery_city }}<br>
+                                        {{ order.delivery_country }}
+                                    </p>
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    <!-- Additional Info -->
+                    <div class="alert alert-info" role="alert" style="border-radius: 8px; background: #e7f3ff; border: 1px solid #b3d9ff; color: #004085;">
+                        <h6 style="font-weight: 700; margin-bottom: 8px;">💡 {% trans "Information" %}</h6>
+                        <p style="margin: 0; font-size: 13px;">
+                            {% trans "This page will automatically update. Refresh your browser to see the latest status." %}
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row gap-3" style="margin-top: 30px;">
+                        <div class="col-md-6">
+                            <button onclick="location.reload()" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600;">
+                                🔄 {% trans "Refresh Status" %}
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'restaurant:menu' %}" class="btn btn-outline-primary w-100" style="color: #f34949; border: 2px solid #f34949; padding: 12px; border-radius: 6px; font-weight: 600; text-decoration: none;">
+                                🍽️ {% trans "Order More" %}
+                            </a>
+                        </div>
+                    </div>
+
+                {% else %}
+                    <!-- No Order Found -->
+                    <div class="card" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+                        <div style="padding: 60px 30px; text-align: center;">
+                            <div style="font-size: 80px; margin-bottom: 20px;">🔍</div>
+                            <h3 style="color: #1a1a1a; font-weight: 700; margin-bottom: 10px;">{% trans "Order Not Found" %}</h3>
+                            <p style="color: #666; font-size: 15px; margin-bottom: 30px;">
+                                {% if error %}
+                                    {{ error }}
+                                {% else %}
+                                    {% trans "Please enter a valid order ID to track your order" %}
+                                {% endif %}
+                            </p>
+
+                            <!-- Search Form -->
+                            <form method="get" style="display: flex; gap: 10px; margin-bottom: 30px;">
+                                <input 
+                                    type="text" 
+                                    name="order_id" 
+                                    placeholder="{% trans 'Enter Order ID (e.g., 123)' %}"
+                                    style="flex: 1; padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;"
+                                >
+                                <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; padding: 12px 30px; border-radius: 6px; font-weight: 600;">
+                                    {% trans "Search" %}
+                                </button>
+                            </form>
+
+                            <!-- Info -->
+                            <div class="alert alert-info" style="background: #e7f3ff; border: 1px solid #b3d9ff; color: #004085; border-radius: 6px; margin-bottom: 0;">
+                                <p style="margin: 0; font-size: 13px;">
+                                    💡 {% trans "You can find your Order ID in the confirmation email you received when the order was placed." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Back Link -->
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="{% url 'restaurant:menu' %}" class="btn btn-primary" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; padding: 12px 30px; border-radius: 6px; font-weight: 600; text-decoration: none;">
+                            🏠 {% trans "Back to Menu" %}
+                        </a>
+                    </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes pulse {
+        0%, 100% {
+            box-shadow: 0 4px 12px rgba(243, 73, 73, 0.3);
+        }
+        50% {
+            box-shadow: 0 4px 24px rgba(243, 73, 73, 0.6);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            margin-bottom: 20px;
+        }
+        
+        .row.gap-3 > div {
+            margin-bottom: 10px;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Login - Sip and Sunshine" %}{% endblock %}
+
+{% block content %}
+<div class="auth-container" style="min-height: 100vh; display: flex; align-items: center; padding: 20px 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="auth-card" style="background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); padding: 40px; border-top: 4px solid #f34949;">
+                    
+                    <!-- Logo -->
+                    <div class="text-center mb-4">
+                        <img src="{% static 'images/logo.svg' %}" alt="Sip and Sunshine" style="height: 50px; margin-bottom: 10px;">
+                        <h2 style="color: #1a1a1a; font-weight: 700; margin: 10px 0;">{% trans "Welcome Back" %}</h2>
+                        <p style="color: #666; font-size: 14px;">{% trans "Sign in to your valued customer account" %}</p>
+                    </div>
+
+                    <!-- Error Messages -->
+                    {% if errors %}
+                        <div class="alert alert-danger" role="alert" style="border-radius: 6px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
+                            <strong>Error:</strong> {{ errors.general }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Info Messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}" style="border-radius: 6px; margin-bottom: 20px;">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- Login Form -->
+                    <form method="post" action="{% url 'restaurant:customer_login' %}" class="auth-form">
+                        {% csrf_token %}
+
+                        <!-- Email -->
+                        <div class="form-group mb-3">
+                            <label for="email" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "Email Address" %} <span style="color: #f34949;">*</span>
+                            </label>
+                            <input 
+                                type="email" 
+                                class="form-control" 
+                                id="email" 
+                                name="email" 
+                                placeholder="you@example.com"
+                                value="{{ form_data.email }}"
+                                required
+                                autofocus
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group mb-4">
+                            <label for="password" style="font-weight: 600; color: #1a1a1a; display: block; margin-bottom: 8px;">
+                                {% trans "Password" %} <span style="color: #f34949;">*</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="password" 
+                                name="password" 
+                                placeholder="{% trans 'Enter your password' %}"
+                                required
+                                style="padding: 12px 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; transition: all 0.3s ease;"
+                            >
+                        </div>
+
+                        <!-- Remember Me & Forgot Password -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 13px;">
+                            <label style="cursor: pointer; color: #666;">
+                                <input type="checkbox" name="remember" style="margin-right: 5px;"> {% trans "Remember me" %}
+                            </label>
+                            <a href="#" style="color: #f34949; text-decoration: none; font-weight: 600;">{% trans "Forgot password?" %}</a>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button 
+                            type="submit" 
+                            class="btn btn-primary w-100"
+                            style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; padding: 12px 24px; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px;"
+                        >
+                            {% trans "Sign In" %}
+                        </button>
+                    </form>
+
+                    <!-- Register Link -->
+                    <div class="text-center mt-4" style="border-top: 1px solid #e0e0e0; padding-top: 20px;">
+                        <p style="color: #666; font-size: 14px;">
+                            {% trans "Don't have an account?" %}
+                            <a href="{% url 'restaurant:customer_register' %}" style="color: #f34949; font-weight: 600; text-decoration: none;">
+                                {% trans "Create one now" %}
+                            </a>
+                        </p>
+                    </div>
+
+                    <!-- Guest Checkout Note -->
+                    <div class="alert alert-info" role="alert" style="border-radius: 6px; margin-top: 20px; font-size: 12px; background: #e7f3ff; border: 1px solid #b3d9ff; color: #004085;">
+                        <strong>💡 {% trans "Tip:" %}</strong> {% trans "You can also order as a guest without creating an account" %}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        outline: none;
+        border-color: #f34949;
+        box-shadow: 0 0 0 4px rgba(243, 73, 73, 0.1);
+        background: #fafafa;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #d63d3d 0%, #b82d2d 100%) !important;
+        box-shadow: 0 8px 20px rgba(243, 73, 73, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    @media (max-width: 576px) {
+        .auth-card {
+            padding: 25px !important;
+        }
+        
+        h2 {
+            font-size: 22px !important;
+        }
+    }
+</style>
+{% endblock %}

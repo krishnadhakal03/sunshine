@@ -1,0 +1,214 @@
+{% load i18n %}
+{# Order Type Selection Modal #}
+<div id="orderTypeModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            
+            <!-- Modal Header -->
+            <div class="modal-header" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 12px 12px 0 0; padding: 20px;">
+                <h5 class="modal-title" style="font-weight: 700; letter-spacing: 0.5px;">
+                    📋 {% trans "How would you like to order?" %}
+                </h5>
+                <button type="button" class="btn-close" onclick="closeOrderTypeModal()" style="background: rgba(255,255,255,0.5); border: none; padding: 8px; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; font-size: 20px; color: white; display: flex; align-items: center; justify-content: center;" title="Close">
+                    ×
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 40px;">
+                
+                <!-- Order Type Options -->
+                <div class="order-type-options" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    
+                    <!-- Dine-In Option -->
+                    <div class="order-type-card" onclick="selectOrderType('seated')" style="
+                        padding: 30px;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 8px;
+                        text-align: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        background: white;
+                    " onmouseover="this.style.borderColor='#f34949'; this.style.boxShadow='0 4px 12px rgba(243,73,73,0.15)';" onmouseout="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none';">
+                        <div style="font-size: 48px; margin-bottom: 15px;">🪑</div>
+                        <h5 style="font-weight: 700; color: #1a1a1a; margin: 0 0 10px 0;">{% trans "Dine-In" %}</h5>
+                        <p style="color: #666; font-size: 13px; margin: 0;">{% trans "Eat at our restaurant" %}</p>
+                        <div style="margin-top: 15px; font-size: 12px; color: #f34949; font-weight: 600;">{% trans "Table seating required" %}</div>
+                    </div>
+
+                    <!-- Pickup Option -->
+                    <div class="order-type-card" onclick="selectOrderType('pickup')" style="
+                        padding: 30px;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 8px;
+                        text-align: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        background: white;
+                    " onmouseover="this.style.borderColor='#f34949'; this.style.boxShadow='0 4px 12px rgba(243,73,73,0.15)';" onmouseout="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none';">
+                        <div style="font-size: 48px; margin-bottom: 15px;">🛒</div>
+                        <h5 style="font-weight: 700; color: #1a1a1a; margin: 0 0 10px 0;">{% trans "Pickup" %}</h5>
+                        <p style="color: #666; font-size: 13px; margin: 0;">{% trans "Pick up your order" %}</p>
+                        <div style="margin-top: 15px; font-size: 12px; color: #20c997; font-weight: 600;" id="pickupTime">
+                            {% trans "Ready in" %} <span id="pickupTimeMinutes">15</span> {% trans "min" %}
+                        </div>
+                    </div>
+
+                    <!-- Delivery Option -->
+                    <div class="order-type-card" onclick="selectOrderType('delivery')" style="
+                        padding: 30px;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 8px;
+                        text-align: center;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        background: white;
+                    " onmouseover="this.style.borderColor='#f34949'; this.style.boxShadow='0 4px 12px rgba(243,73,73,0.15)';" onmouseout="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none';">
+                        <div style="font-size: 48px; margin-bottom: 15px;">🚚</div>
+                        <h5 style="font-weight: 700; color: #1a1a1a; margin: 0 0 10px 0;">{% trans "Delivery" %}</h5>
+                        <p style="color: #666; font-size: 13px; margin: 0;">{% trans "Order to your home" %}</p>
+                        <div style="margin-top: 15px; font-size: 12px; color: #ffc107; font-weight: 600;" id="deliveryInfo">
+                            €<span id="deliveryCharge">2.50</span> {% trans "delivery fee" %}
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Info Text -->
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #f34949;">
+                    <p style="margin: 0; color: #666; font-size: 13px;">
+                        <strong>{% trans "Tip:" %}</strong> {% trans "You can always change the order type until checkout." %}
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    function selectOrderType(orderType) {
+        // Store order type
+        sessionStorage.setItem('checkout_order_type', orderType);
+
+        // Update checkout progress UI if present
+        try {
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const step4 = document.getElementById('step4');
+            if (step1) step1.style.opacity = '0.5';
+            if (step2) step2.style.opacity = '1';
+            if (step3) step3.style.opacity = '0.5';
+            if (step4) step4.style.opacity = '0.5';
+        } catch (e) {
+            // Ignore UI update errors
+        }
+        
+        // Close modal
+        closeOrderTypeModal();
+        
+        // Move to customer details
+        setTimeout(() => {
+            proceedToCustomerDetails(orderType);
+        }, 300);
+    }
+
+    function closeOrderTypeModal() {
+        const modal = document.getElementById('orderTypeModal');
+        if (modal) {
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+        }
+    }
+
+    function openOrderTypeModal() {
+        const modal = document.getElementById('orderTypeModal');
+        if (modal) {
+            modal.classList.add('show');
+            modal.style.display = 'block';
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+        }
+    }
+
+    // Load delivery settings on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/api/settings/delivery/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.estimated_pickup_time) {
+                    document.getElementById('pickupTimeMinutes').textContent = data.estimated_pickup_time;
+                }
+                if (data.delivery_charge_fixed) {
+                    document.getElementById('deliveryCharge').textContent = data.delivery_charge_fixed.toFixed(2);
+                }
+
+                // Persist settings for later steps (order review)
+                try {
+                    if (typeof data.delivery_charge_fixed === 'number') {
+                        sessionStorage.setItem('delivery_charge_fixed', String(data.delivery_charge_fixed));
+                    }
+                    if (typeof data.delivery_charge_percent === 'number') {
+                        sessionStorage.setItem('delivery_charge_percent', String(data.delivery_charge_percent));
+                    }
+                } catch (e) {
+                    // sessionStorage may be unavailable in some modes
+                }
+            })
+            .catch(error => console.warn('Could not load delivery settings:', error));
+    });
+</script>
+
+<!-- Modal Styles -->
+<style>
+    #orderTypeModal .modal-backdrop {
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .order-type-card {
+        position: relative;
+    }
+
+    .order-type-card.selected {
+        border-color: #f34949 !important;
+        background: rgba(243, 73, 73, 0.05);
+        box-shadow: 0 4px 12px rgba(243, 73, 73, 0.15) !important;
+    }
+
+    .order-type-card.selected::after {
+        content: '✓';
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        background: #f34949;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    @media (max-width: 768px) {
+        .order-type-options {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 576px) {
+        #orderTypeModal .modal-body {
+            padding: 20px !important;
+        }
+        .order-type-card {
+            padding: 18px !important;
+        }
+    }
+</style>

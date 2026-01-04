@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <!-- Background circle -->
+    <circle cx="50" cy="50" r="48" fill="#ffffff" stroke="#f34949" stroke-width="2"/>
+    
+    <!-- Sun -->
+    <circle cx="50" cy="30" r="12" fill="#f34949"/>
+    <g stroke="#f34949" stroke-width="1.5" stroke-linecap="round">
+        <line x1="50" y1="8" x2="50" y2="14"/>
+        <line x1="50" y1="46" x2="50" y2="52"/>
+        <line x1="28" y1="30" x2="34" y2="30"/>
+        <line x1="66" y1="30" x2="72" y2="30"/>
+    </g>
+    
+    <!-- Glass (left) -->
+    <g fill="none" stroke="#333" stroke-width="1">
+        <path d="M 32 40 L 30 62 Q 30 66 34 66 L 42 66 Q 46 66 46 62 L 44 40 Z" fill="#fffacd" opacity="0.6"/>
+        <ellipse cx="38" cy="40" rx="7" ry="2" fill="#daa520" opacity="0.5"/>
+        <circle cx="38" cy="38" r="8" fill="#fffacd" opacity="0.4"/>
+    </g>
+    
+    <!-- Meat (right) -->
+    <path d="M 56 42 L 68 45 L 65 62 L 54 60 Z" fill="#c84b31" stroke="#333" stroke-width="1"/>
+    <line x1="57" y1="48" x2="63" y2="48" stroke="#8b4513" stroke-width="1"/>
+    <line x1="57" y1="52" x2="63" y2="52" stroke="#8b4513" stroke-width="1"/>
+    <line x1="57" y1="56" x2="63" y2="56" stroke="#8b4513" stroke-width="1"/>
+    
+    <!-- Sparkle/shine -->
+    <circle cx="45" cy="25" r="1.5" fill="#f34949" opacity="0.7"/>
+    <circle cx="60" cy="35" r="1" fill="#f34949" opacity="0.5"/>
+</svg>

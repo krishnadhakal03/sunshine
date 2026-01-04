@@ -1,0 +1,68 @@
+/*
+  Navbar visibility fixes
+  - Inner pages typically have light backgrounds, so the theme's default white links become invisible.
+  - Home can have mixed hero imagery, so a subtle dark backdrop helps keep links readable.
+*/
+
+.ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
+  padding-top: 1.4rem !important;
+}
+
+/* Mobile-first: keep the home navbar pinned and prevent content overlap */
+body.home-page #ftco-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+}
+
+body.home-page {
+  --home-navbar-offset: 86px;
+  padding-top: var(--home-navbar-offset);
+}
+
+/* On smaller screens the collapsed menu can be taller than the viewport; allow scrolling */
+@media (max-width: 1199.98px) {
+  body.home-page #ftco-navbar .navbar-collapse {
+    max-height: calc(100vh - var(--home-navbar-offset));
+    overflow-y: auto;
+  }
+}
+
+@media (min-width: 992px) {
+  @media (min-width: 1200px) {
+    #ftco-navbar #ftco-nav {
+      padding-left: 2rem;
+    }
+  }
+
+  body.inner-page .ftco-navbar-light {
+    position: relative;
+    top: 0;
+    background: #fff !important;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  body.inner-page .ftco-navbar-light .navbar-brand {
+    color: #000 !important;
+  }
+
+  body.inner-page .ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
+    color: #000 !important;
+  }
+
+  body.inner-page .ftco-navbar-light .navbar-nav > .nav-item > .nav-link:hover,
+  body.inner-page .ftco-navbar-light .navbar-nav > .nav-item > .nav-link:focus {
+    color: #f34949 !important;
+  }
+
+  body.home-page .ftco-navbar-light {
+    background: rgba(0, 0, 0, 0.35) !important;
+  }
+
+  body.home-page {
+    --home-navbar-offset: 80px;
+    padding-top: var(--home-navbar-offset);
+  }
+}

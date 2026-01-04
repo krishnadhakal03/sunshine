@@ -1,0 +1,14 @@
+Django==4.2.7
+django-parler==2.3
+django-parler-rest==2.2
+djangorestframework==3.14.0
+sorl-thumbnail==12.9.0
+Pillow==10.1.0
+python-dateutil==2.8.2
+pytz==2023.3
+
+# Windows-friendly timezone data for Python's zoneinfo
+tzdata==2025.3
+
+# Browser-based UI journey tests
+playwright==1.57.0

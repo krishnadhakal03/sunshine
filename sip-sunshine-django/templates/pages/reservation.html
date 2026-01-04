@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Reservation" %} - Sip and SunShine{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Add any custom styles here if needed */
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'images/bg_4.jpg' %}');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-2 bread">{% trans "Book A Table" %}</h1>
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'restaurant:home' %}">{% trans "Home" %} <i class="ion-ios-arrow-forward"></i></a></span> <span>{% trans "Reservation" %} <i class="ion-ios-arrow-forward"></i></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reservation Form Section -->
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 heading-section ftco-animate text-center">
+                <h2 class="mb-4">{% trans "Reserve" %} <span class="ftco-accent">{% trans "Your Table" %}</span></h2>
+                <p>{% trans "Fill in the form below to reserve your table at Sip and SunShine. We look forward to welcoming you!" %}</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7 ftco-animate">
+                <form method="POST" class="bg-light p-5">
+                    {% csrf_token %}
+                    
+                    <!-- Guest Name -->
+                    <div class="form-group">
+                        <label for="name">{% trans "Your Name" %} <span style="color: #f34949;">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               placeholder="{% trans 'John Doe' %}" required>
+                    </div>
+
+                    <!-- Email & Phone -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">{% trans "Email Address" %} <span style="color: #f34949;">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       placeholder="{% trans 'john@example.com' %}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="phone">{% trans "Phone Number" %} <span style="color: #f34949;">*</span></label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       placeholder="{% trans '+31 123 456 789' %}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="reservation_date">{% trans "Reservation Date" %} <span style="color: #f34949;">*</span></label>
+                                <input type="date" class="form-control" id="reservation_date" 
+                                       name="reservation_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="reservation_time">{% trans "Reservation Time" %} <span style="color: #f34949;">*</span></label>
+                                <input type="time" class="form-control" id="reservation_time" 
+                                       name="reservation_time" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Number of Guests -->
+                    <div class="form-group">
+                        <label for="number_of_guests">{% trans "Number of Guests" %} <span style="color: #f34949;">*</span></label>
+                        <input type="number" class="form-control" id="number_of_guests" 
+                               name="number_of_guests" min="1" max="20" value="2" required>
+                    </div>
+
+                    <!-- Special Requests -->
+                    <div class="form-group">
+                        <label for="special_requests">{% trans "Special Requests" %}</label>
+                        <textarea name="special_requests" id="special_requests" cols="30" rows="4" 
+                                  class="form-control" placeholder="{% trans 'Any dietary requirements or special occasions? Let us know!' %}"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary py-3 px-5">{% trans "Reserve Now" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hours Section -->
+<section class="ftco-section ftco-no-pb ftco-no-pt bg-light">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-3">
+            <div class="col-md-7 heading-section ftco-animate text-center">
+                <h2 class="mb-4">{% trans "Opening" %} <span class="ftco-accent">{% trans "Hours" %}</span></h2>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="opening-hours">
+                    <h4 class="mb-3">{% trans "Monday to Thursday" %}</h4>
+                    <p class="mb-4">11:00 AM - 10:00 PM</p>
+                    
+                    <h4 class="mb-3">{% trans "Friday to Sunday" %}</h4>
+                    <p class="mb-4">11:00 AM - 11:00 PM</p>
+                    
+                    <p class="text-muted">{% trans "Closed on major holidays" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

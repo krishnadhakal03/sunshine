@@ -1,0 +1,423 @@
+{% load i18n %}
+{# Customer Details Form #}
+<div id="customerDetailsModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            
+            <!-- Modal Header -->
+            <div class="modal-header" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 12px 12px 0 0; padding: 20px;">
+                <h5 class="modal-title" style="font-weight: 700; letter-spacing: 0.5px;">
+                    👤 {% trans "Your Details" %}
+                </h5>
+                <button type="button" class="btn-close" onclick="closeCustomerDetailsModal()" style="background: rgba(255,255,255,0.5); border: none; padding: 8px; width: 32px; height: 32px; border-radius: 4px; cursor: pointer; font-size: 20px; color: white; display: flex; align-items: center; justify-content: center;" title="Close">
+                    ×
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding: 30px;">
+                
+                <!-- Login/Register/Guest Options -->
+                <div id="authOptions" style="display: none; margin-bottom: 30px;">
+                    <p style="margin-bottom: 15px; color: #666; font-weight: 600;">{% trans "Do you have an account?" %}</p>
+                    <div class="btn-group w-100" role="group" style="display: flex; gap: 10px;">
+                        <button type="button" class="btn" onclick="switchAuthMode('login')" 
+                            style="flex: 1; border: 2px solid #e0e0e0; background: white; color: #1a1a1a; font-weight: 600; padding: 12px; border-radius: 6px; cursor: pointer; transition: all 0.3s;">
+                            🔑 {% trans "Login" %}
+                        </button>
+                        <button type="button" class="btn" onclick="switchAuthMode('register')" 
+                            style="flex: 1; border: 2px solid #e0e0e0; background: white; color: #1a1a1a; font-weight: 600; padding: 12px; border-radius: 6px; cursor: pointer; transition: all 0.3s;">
+                            ✍️ {% trans "Register" %}
+                        </button>
+                        <button type="button" class="btn" onclick="switchAuthMode('guest')" 
+                            style="flex: 1; border: 2px solid #f34949; background: #f34949; color: white; font-weight: 600; padding: 12px; border-radius: 6px; cursor: pointer;">
+                            👤 {% trans "Guest" %}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <div id="loginForm" style="display: none; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <h6 style="margin-bottom: 15px; font-weight: 700;">{% trans "Login to your account" %}</h6>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Email" %} *</label>
+                            <input type="email" id="loginEmail" placeholder="you@example.com" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Password" %} *</label>
+                            <input type="password" id="loginPassword" placeholder="••••••••" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        </div>
+                        <button onclick="performLogin()" style="background: #f34949; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                            {% trans "Login" %}
+                        </button>
+                        <p style="text-align: center; font-size: 12px; color: #999;">
+                            <a href="/forgot-password/" style="color: #f34949; text-decoration: none;">{% trans "Forgot password?" %}</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" style="display: none; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <h6 style="margin-bottom: 15px; font-weight: 700;">{% trans "Create a new account" %}</h6>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Full Name" %} *</label>
+                            <input type="text" id="registerName" placeholder="John Doe" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Email" %} *</label>
+                            <input type="email" id="registerEmail" placeholder="you@example.com" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Password" %} *</label>
+                            <input type="password" id="registerPassword" placeholder="••••••••" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Confirm Password" %} *</label>
+                            <input type="password" id="registerPasswordConfirm" placeholder="••••••••" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        </div>
+                        <button onclick="performRegister()" style="background: #f34949; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                            {% trans "Register & Continue" %}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Guest/Basic Customer Details -->
+                <div id="customerForm" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Your Name" %} <span style="color: #f34949;">*</span></label>
+                        <input type="text" id="guestName" placeholder="{% trans 'e.g., John Doe' %}" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;" required>
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Phone Number" %} <span style="color: #f34949;">*</span></label>
+                        <input type="tel" id="guestPhone" placeholder="{% trans 'e.g., +31 6 12345678' %}" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;" required>
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Email Address" %}</label>
+                        <input type="email" id="guestEmail" placeholder="{% trans 'you@example.com (optional)' %}" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        <small style="color: #999;">{% trans "We'll send your order confirmation here" %}</small>
+                    </div>
+
+                    <!-- Table Number (for Dine-In) -->
+                    <div id="tableNumberField" style="display: none;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Table Number" %} <span style="color: #f34949;">*</span></label>
+                        <input type="number" id="tableNumber" placeholder="{% trans 'e.g., 5' %}" min="1" max="50" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                    </div>
+
+                    <!-- Preferred Pickup Time (for Pickup) -->
+                    <div id="pickupTimeField" style="display: none;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Preferred Pickup Time" %}</label>
+                        <input type="datetime-local" id="preferredPickupTime" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        <small style="color: #999;">{% trans "Leave empty for ASAP" %}</small>
+                    </div>
+
+                    <!-- Delivery Address (for Delivery) -->
+                    <div id="deliveryAddressSection" style="display: none;">
+                        <h6 style="margin-bottom: 15px; font-weight: 700; color: #1a1a1a;">📍 {% trans "Delivery Address" %}</h6>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Street Address" %} <span style="color: #f34949;">*</span></label>
+                            <input type="text" id="deliveryAddress" placeholder="{% trans 'e.g., Main Street 123' %}" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "City" %} <span style="color: #f34949;">*</span></label>
+                                <input type="text" id="deliveryCity" placeholder="{% trans 'Amsterdam' %}" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Postal Code" %} <span style="color: #f34949;">*</span></label>
+                                <input type="text" id="deliveryPostalCode" placeholder="{% trans '1000 AA' %}" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Delivery Instructions" %}</label>
+                            <textarea id="deliveryInstructions" placeholder="{% trans 'e.g., Ring doorbell 3 times, leave at front door' %}" rows="3" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; font-family: inherit;"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Special Requests -->
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px;">{% trans "Special Requests" %}</label>
+                        <textarea id="specialRequests" placeholder="{% trans 'Any special instructions for your order?' %}" rows="3" style="width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; font-family: inherit;"></textarea>
+                    </div>
+                </div>
+
+                <!-- Error Messages -->
+                <div id="customerFormError" class="alert alert-danger" role="alert" style="display: none; margin-top: 15px; border-radius: 6px;"></div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="border-top: 1px solid #e0e0e0; padding: 20px; background: #f8f9fa; gap: 10px;">
+                <button type="button" class="btn btn-secondary" onclick="goBackToOrderType()" style="border-radius: 6px;">
+                    ← {% trans "Back" %}
+                </button>
+                <button type="button" class="btn btn-primary" onclick="proceedToDeliveryDetails()" style="background: linear-gradient(135deg, #f34949 0%, #d63d3d 100%); color: white; border: none; border-radius: 6px; font-weight: 600; padding: 10px 30px;">
+                    {% trans "Continue" %} →
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    let currentAuthMode = 'guest';
+
+    function switchAuthMode(mode) {
+        currentAuthMode = mode;
+        
+        document.getElementById('loginForm').style.display = mode === 'login' ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = mode === 'register' ? 'block' : 'none';
+        document.getElementById('customerForm').style.display = mode === 'guest' ? 'block' : 'none';
+    }
+
+    function openCustomerDetailsModal(orderType) {
+        const modal = document.getElementById('customerDetailsModal');
+        if (modal) {
+            modal.classList.add('show');
+            modal.style.display = 'block';
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+        }
+
+        // Show/hide fields based on order type
+        document.getElementById('tableNumberField').style.display = orderType === 'seated' ? 'block' : 'none';
+        document.getElementById('pickupTimeField').style.display = orderType === 'pickup' ? 'block' : 'none';
+        document.getElementById('deliveryAddressSection').style.display = orderType === 'delivery' ? 'block' : 'none';
+        
+        // Show auth options if not logged in
+        const isLoggedIn = document.body.getAttribute('data-user-logged-in') === 'true';
+        document.getElementById('authOptions').style.display = isLoggedIn ? 'none' : 'block';
+        
+        if (isLoggedIn) {
+            currentAuthMode = 'guest';
+            switchAuthMode('guest');
+
+            // Prefill from session user data (don’t overwrite if user already typed)
+            try {
+                const nameFromUser = document.body.getAttribute('data-user-name') || '';
+                const emailFromUser = document.body.getAttribute('data-user-email') || '';
+                const phoneFromUser = document.body.getAttribute('data-user-phone') || '';
+
+                const deliveryAddressFromUser = document.body.getAttribute('data-user-delivery-address') || '';
+                const deliveryCityFromUser = document.body.getAttribute('data-user-delivery-city') || '';
+                const deliveryPostalFromUser = document.body.getAttribute('data-user-delivery-postal-code') || '';
+                const nameInput = document.getElementById('guestName');
+                const phoneInput = document.getElementById('guestPhone');
+                const emailInput = document.getElementById('guestEmail');
+
+                if (nameInput && !nameInput.value.trim() && nameFromUser) {
+                    nameInput.value = nameFromUser;
+                }
+                if (phoneInput && !phoneInput.value.trim() && phoneFromUser) {
+                    phoneInput.value = phoneFromUser;
+                }
+                if (emailInput && !emailInput.value.trim() && emailFromUser) {
+                    emailInput.value = emailFromUser;
+                }
+
+                if (orderType === 'delivery') {
+                    const addressInput = document.getElementById('deliveryAddress');
+                    const cityInput = document.getElementById('deliveryCity');
+                    const postalInput = document.getElementById('deliveryPostalCode');
+
+                    if (addressInput && !addressInput.value.trim() && deliveryAddressFromUser) {
+                        addressInput.value = deliveryAddressFromUser;
+                    }
+                    if (cityInput && !cityInput.value.trim() && deliveryCityFromUser) {
+                        cityInput.value = deliveryCityFromUser;
+                    }
+                    if (postalInput && !postalInput.value.trim() && deliveryPostalFromUser) {
+                        postalInput.value = deliveryPostalFromUser;
+                    }
+                }
+            } catch (e) {
+                // Ignore prefill errors
+            }
+        }
+    }
+
+    function closeCustomerDetailsModal() {
+        const modal = document.getElementById('customerDetailsModal');
+        if (modal) {
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+        }
+    }
+
+    function goBackToOrderType() {
+        try {
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            if (step2) step2.style.opacity = '0.5';
+            if (step1) step1.style.opacity = '1';
+        } catch (e) {
+            // Ignore UI update errors
+        }
+        closeCustomerDetailsModal();
+        setTimeout(() => openOrderTypeModal(), 300);
+    }
+
+    function proceedToDeliveryDetails() {
+        const orderType = sessionStorage.getItem('checkout_order_type');
+        
+        // Validate form
+        if (!document.getElementById('guestName').value.trim()) {
+            showCustomerFormError('{% trans "Please enter your name" %}');
+            return;
+        }
+        
+        if (!document.getElementById('guestPhone').value.trim()) {
+            showCustomerFormError('{% trans "Please enter your phone number" %}');
+            return;
+        }
+
+        if (orderType === 'seated' && !document.getElementById('tableNumber').value) {
+            showCustomerFormError('{% trans "Please enter your table number" %}');
+            return;
+        }
+
+        if (orderType === 'delivery') {
+            if (!document.getElementById('deliveryAddress').value.trim()) {
+                showCustomerFormError('{% trans "Please enter your delivery address" %}');
+                return;
+            }
+            if (!document.getElementById('deliveryCity').value.trim()) {
+                showCustomerFormError('{% trans "Please enter your city" %}');
+                return;
+            }
+            if (!document.getElementById('deliveryPostalCode').value.trim()) {
+                showCustomerFormError('{% trans "Please enter your postal code" %}');
+                return;
+            }
+        }
+
+        // Store customer details
+        const customerData = {
+            name: document.getElementById('guestName').value,
+            phone: document.getElementById('guestPhone').value,
+            email: document.getElementById('guestEmail').value,
+            special_requests: document.getElementById('specialRequests').value,
+        };
+
+        if (orderType === 'seated') {
+            customerData.table_number = document.getElementById('tableNumber').value;
+        } else if (orderType === 'pickup') {
+            customerData.preferred_pickup_time = document.getElementById('preferredPickupTime').value;
+        } else if (orderType === 'delivery') {
+            customerData.delivery_address = document.getElementById('deliveryAddress').value;
+            customerData.delivery_city = document.getElementById('deliveryCity').value;
+            customerData.delivery_postal_code = document.getElementById('deliveryPostalCode').value;
+            customerData.delivery_instructions = document.getElementById('deliveryInstructions').value;
+        }
+
+        sessionStorage.setItem('checkout_customer_data', JSON.stringify(customerData));
+
+        // Update checkout progress UI if present
+        try {
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const step4 = document.getElementById('step4');
+            if (step2) step2.style.opacity = '0.5';
+            if (step3) step3.style.opacity = '1';
+            if (step4) step4.style.opacity = '0.5';
+        } catch (e) {
+            // Ignore UI update errors
+        }
+        
+        closeCustomerDetailsModal();
+        setTimeout(() => proceedToOrderReview(), 300);
+    }
+
+    function showCustomerFormError(message) {
+        const errorDiv = document.getElementById('customerFormError');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        errorDiv.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    function performLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+            showCustomerFormError('{% trans "Please enter email and password" %}');
+            return;
+        }
+
+        // TODO: Implement actual login
+        console.log('Login:', email);
+        showCustomerFormError('{% trans "Login feature coming soon" %}');
+    }
+
+    function performRegister() {
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+        
+        if (!name || !email || !password || !passwordConfirm) {
+            showCustomerFormError('{% trans "Please fill in all fields" %}');
+            return;
+        }
+
+        if (password !== passwordConfirm) {
+            showCustomerFormError('{% trans "Passwords do not match" %}');
+            return;
+        }
+
+        // TODO: Implement actual registration
+        console.log('Register:', name, email);
+        showCustomerFormError('{% trans "Registration feature coming soon" %}');
+    }
+
+    function proceedToCustomerDetails(orderType) {
+        openCustomerDetailsModal(orderType);
+    }
+</script>
+
+<!-- Modal Styles -->
+<style>
+    #customerDetailsModal input, 
+    #customerDetailsModal textarea {
+        transition: border-color 0.3s;
+    }
+
+    #customerDetailsModal input:focus,
+    #customerDetailsModal textarea:focus {
+        outline: none;
+        border-color: #f34949 !important;
+        box-shadow: 0 0 0 3px rgba(243, 73, 73, 0.1);
+    }
+
+    .btn-group button:hover {
+        background: #f8f9fa !important;
+    }
+
+    .btn-group button.active {
+        border-color: #f34949 !important;
+        background: #f34949 !important;
+        color: white !important;
+    }
+
+    @media (max-width: 576px) {
+        #customerDetailsModal .modal-body {
+            padding: 20px !important;
+        }
+        #deliveryAddressSection > div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
