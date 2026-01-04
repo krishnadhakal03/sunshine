@@ -149,17 +149,10 @@ This will:
 - Create pages (Home, About, Menu, Blog, Contact, Reservation)
 - Create sample menu items in all languages
 
-### Step 7: Copy Template Assets (First Time Only)
+### Step 7: Static Assets
 
-Copy the CSS, JS, images, and fonts from the Kusina template to the static folder:
-
-```bash
-# Windows example - adjust paths as needed
-xcopy f:\sunshine\kusina-master\css\* f:\sunshine\sip-sunshine-django\static\css\ /Y
-xcopy f:\sunshine\kusina-master\js\* f:\sunshine\sip-sunshine-django\static\js\ /Y
-xcopy f:\sunshine\kusina-master\images\* f:\sunshine\sip-sunshine-django\static\images\ /Y
-xcopy f:\sunshine\kusina-master\fonts\* f:\sunshine\sip-sunshine-django\static\fonts\ /Y
-```
+Static assets (CSS/JS/images/fonts) are already included in this repository under `static/`.
+You do not need to copy assets from any external template folder.
 
 ### Step 8: Run Development Server
 
